@@ -14,6 +14,16 @@ SessionData >> setDescription: value [
 ]
 
 { #category : #initialization }
+SessionData >> setFinished: value [
+	Description := Description, ' Finished: ', value
+]
+
+{ #category : #initialization }
 SessionData >> setId: value [
 	Id := value
+]
+
+{ #category : #initialization }
+SessionData >> setStarted: value [
+	Description := Description, ' Started: ', value
 ]
