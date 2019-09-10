@@ -12,7 +12,7 @@ SessionService class >> endCurrentSession [
 
 	CurrentSession ifNil: [ ^self ].
 
-	CurrentSession setFinished: DateAndTime now asString.
+	CurrentSession setFinished: DateAndTime now.
 
 	Repository save: CurrentSession.
 	
@@ -29,9 +29,21 @@ SessionService class >> registerNewSession [
 		SessionData new 
 			setId: UUID new printString; 
 			setDescription: 'Pharo3';			
-			setStarted: DateAndTime now asString.
+			setStarted: DateAndTime now.
 
 	Repository save: CurrentSession
+]
+
+{ #category : #'as yet unclassified' }
+SessionService class >> registerStepInto: context [
+
+	CurrentSession ifNil: [ ^self ].
+
+	CurrentSession setStepMock: context.
+
+	Repository save: CurrentSession.
+	
+
 ]
 
 { #category : #initialization }
