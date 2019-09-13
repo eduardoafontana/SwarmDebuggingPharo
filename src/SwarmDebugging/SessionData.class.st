@@ -10,18 +10,18 @@ Class {
 	#category : #SwarmDebugging
 }
 
-{ #category : #initialization }
-SessionData >> setDescription: value [
+{ #category : #accessing }
+SessionData >> description: value [
 	Description := value
 ]
 
-{ #category : #initialization }
-SessionData >> setFinished: value [
+{ #category : #accessing }
+SessionData >> finished: value [
 
 	|d s|
 	d := value.
-	s := d dayOfMonth asString, '/', 
-	d month asString, '/', 
+	s := d month asString, '/', 
+	d dayOfMonth asString, '/', 
 	d year asString, ' ', 
 	d hour24 asString, ':', 
 	d minute asString, ':', 
@@ -31,18 +31,18 @@ SessionData >> setFinished: value [
 	Finished := s.
 ]
 
-{ #category : #initialization }
-SessionData >> setId: value [
+{ #category : #accessing }
+SessionData >> id: value [
 	Id := value
 ]
 
-{ #category : #initialization }
-SessionData >> setStarted: value [
+{ #category : #accessing }
+SessionData >> started: value [
 
 	|d s|
 	d := value.
-	s := d dayOfMonth asString, '/', 
-	d month asString, '/', 
+	s := d month asString, '/',
+	d dayOfMonth asString, '/', 
 	d year asString, ' ', 
 	d hour24 asString, ':', 
 	d minute asString, ':', 
@@ -52,8 +52,8 @@ SessionData >> setStarted: value [
 	Started := s.
 ]
 
-{ #category : #initialization }
-SessionData >> setStepMock: value [
+{ #category : #accessing }
+SessionData >> stepMock: value [
 
 	Description := Description, ' StepMock: ', value asString 
 ]

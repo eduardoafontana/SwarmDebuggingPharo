@@ -12,7 +12,7 @@ SessionService class >> endCurrentSession [
 
 	CurrentSession ifNil: [ ^self ].
 
-	CurrentSession setFinished: DateAndTime now.
+	CurrentSession finished: DateAndTime now.
 
 	Repository save: CurrentSession.
 	
@@ -27,9 +27,9 @@ SessionService class >> registerNewSession [
 
 	CurrentSession := 
 		SessionData new 
-			setId: UUID new printString; 
-			setDescription: 'Pharo3';			
-			setStarted: DateAndTime now.
+			id: UUID new printString; 
+			description: 'Pharo4';			
+			started: DateAndTime now.
 
 	Repository save: CurrentSession
 ]
@@ -39,7 +39,7 @@ SessionService class >> registerStepInto: context [
 
 	CurrentSession ifNil: [ ^self ].
 
-	CurrentSession setStepMock: context.
+	CurrentSession stepMock: context.
 
 	Repository save: CurrentSession.
 	
