@@ -29,7 +29,18 @@ SessionService class >> registerNewSession [
 		SessionData new 
 			id: UUID new printString; 
 			description: 'Pharo4';			
-			started: DateAndTime now.
+			started: DateAndTime now;
+			developerName: 'Eduardo A. Fontana';
+			taskName: 'Test from Pharo 2';
+			taskAction: 'SearchingBug';
+			taskDescription: nil;
+			taskCreated: nil;
+			taskTotalSessionTime: '00:00:00.0000000';
+			projectName: 'Swarm on Pharo';
+			breakpoints: nil;
+			codeFiles: nil;
+			events: nil;
+			pathNodes: nil.
 
 	Repository save: CurrentSession
 ]

@@ -15,7 +15,7 @@ jsonData := String streamContents: [ :stream |
       nextPut: (dataObject) ].
 
 ZnClient new
-   url: 'http://swarmserver.azurewebsites.net/api/pharosession';
+   url: 'http://swarmserver.azurewebsites.net/api/session';
    entity: (ZnEntity
                with: jsonData 
                type: ZnMimeType applicationJson);

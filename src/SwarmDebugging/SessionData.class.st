@@ -5,14 +5,45 @@ Class {
 		'Id',
 		'Description',
 		'Started',
-		'Finished'
+		'Finished',
+		'DeveloperName',
+		'TaskName',
+		'TaskAction',
+		'TaskDescription',
+		'TaskCreated',
+		'TaskTotalSessionTime',
+		'ProjectName',
+		'Breakpoints',
+		'CodeFiles',
+		'Events',
+		'PathNodes'
 	],
 	#category : #SwarmDebugging
 }
 
 { #category : #accessing }
+SessionData >> breakpoints: value [
+	Breakpoints := value
+]
+
+{ #category : #accessing }
+SessionData >> codeFiles: value [
+	CodeFiles := value
+]
+
+{ #category : #accessing }
 SessionData >> description: value [
 	Description := value
+]
+
+{ #category : #accessing }
+SessionData >> developerName: value [
+	DeveloperName := value
+]
+
+{ #category : #accessing }
+SessionData >> events: value [
+	Events := value
 ]
 
 { #category : #accessing }
@@ -37,6 +68,16 @@ SessionData >> id: value [
 ]
 
 { #category : #accessing }
+SessionData >> pathNodes: value [
+	PathNodes := value
+]
+
+{ #category : #accessing }
+SessionData >> projectName: value [
+	ProjectName := value
+]
+
+{ #category : #accessing }
 SessionData >> started: value [
 
 	|d s|
@@ -56,4 +97,29 @@ SessionData >> started: value [
 SessionData >> stepMock: value [
 
 	Description := Description, ' StepMock: ', value asString 
+]
+
+{ #category : #accessing }
+SessionData >> taskAction: value [
+	TaskAction := value
+]
+
+{ #category : #accessing }
+SessionData >> taskCreated: value [
+	TaskCreated := value
+]
+
+{ #category : #accessing }
+SessionData >> taskDescription: value [
+	TaskDescription := value
+]
+
+{ #category : #accessing }
+SessionData >> taskName: value [
+	TaskName := value
+]
+
+{ #category : #accessing }
+SessionData >> taskTotalSessionTime: value [
+	TaskTotalSessionTime := value
 ]
