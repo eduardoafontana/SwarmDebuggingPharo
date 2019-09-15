@@ -42,6 +42,11 @@ SessionData >> developerName: value [
 ]
 
 { #category : #accessing }
+SessionData >> events [
+	^Events
+]
+
+{ #category : #accessing }
 SessionData >> events: value [
 	Events := value
 ]

@@ -11,7 +11,8 @@ Repository class >> save: dataObject [
 jsonData := String streamContents: [ :stream | 
    (NeoJSONWriter on: stream)
       prettyPrint: true;
-      mapInstVarsFor: SessionData;
+		mapInstVarsFor: SessionData;
+		mapInstVarsFor: Event;
       nextPut: (dataObject) ].
 
 ZnClient new
@@ -20,4 +21,5 @@ ZnClient new
                with: jsonData 
                type: ZnMimeType applicationJson);
    post.
+
 ]

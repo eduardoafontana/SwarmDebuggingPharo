@@ -39,7 +39,7 @@ SessionService class >> registerNewSession [
 			projectName: 'Swarm on Pharo';
 			breakpoints: nil;
 			codeFiles: nil;
-			events: nil;
+			events: OrderedCollection new;
 			pathNodes: nil.
 
 	Repository save: CurrentSession
@@ -48,9 +48,29 @@ SessionService class >> registerNewSession [
 { #category : #'as yet unclassified' }
 SessionService class >> registerStepInto: context [
 
+	| event |
+
 	CurrentSession ifNil: [ ^self ].
 
 	CurrentSession stepMock: context.
+	
+	event := Event new
+		id: UUID new printString; 
+		eventKind: '';
+		detail: '';
+		namespace: '';
+		type: '';
+		typeFullPath: '';
+		method: '';
+		methodKey: '';
+		methodSignature: '';
+		charStart: nil;
+		charEnd: nil;
+		codeFilePath: '';
+		lineNumber: nil;
+		lineOfCode: '';		
+		created: DateAndTime now.
+	CurrentSession events add: event.
 
 	Repository save: CurrentSession.
 	
