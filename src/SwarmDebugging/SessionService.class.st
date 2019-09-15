@@ -38,7 +38,7 @@ SessionService class >> registerNewSession [
 			taskTotalSessionTime: '00:00:00.0000000';
 			projectName: 'Swarm on Pharo';
 			breakpoints: nil;
-			codeFiles: nil;
+			codeFiles: OrderedCollection new;
 			events: OrderedCollection new;
 			pathNodes: nil.
 
@@ -48,7 +48,7 @@ SessionService class >> registerNewSession [
 { #category : #'as yet unclassified' }
 SessionService class >> registerStepInto: context [
 
-	| event |
+	| event codeFile |
 
 	CurrentSession ifNil: [ ^self ].
 
@@ -71,6 +71,13 @@ SessionService class >> registerStepInto: context [
 		lineOfCode: '';		
 		created: DateAndTime now.
 	CurrentSession events add: event.
+	
+	codeFile := CodeFile new 
+		id: UUID new printString;
+		path: '';
+		content: '';	
+		created: DateAndTime now.
+	CurrentSession codeFiles add: codeFile.
 
 	Repository save: CurrentSession.
 	

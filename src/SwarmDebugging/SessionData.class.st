@@ -27,6 +27,11 @@ SessionData >> breakpoints: value [
 ]
 
 { #category : #accessing }
+SessionData >> codeFiles [
+	^CodeFiles
+]
+
+{ #category : #accessing }
 SessionData >> codeFiles: value [
 	CodeFiles := value
 ]

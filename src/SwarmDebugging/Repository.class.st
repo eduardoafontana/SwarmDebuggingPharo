@@ -13,6 +13,7 @@ jsonData := String streamContents: [ :stream |
       prettyPrint: true;
 		mapInstVarsFor: SessionData;
 		mapInstVarsFor: Event;
+		mapInstVarsFor: CodeFile;		
       nextPut: (dataObject) ].
 
 ZnClient new
