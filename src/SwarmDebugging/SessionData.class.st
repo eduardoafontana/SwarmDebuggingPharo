@@ -78,6 +78,11 @@ SessionData >> id: value [
 ]
 
 { #category : #accessing }
+SessionData >> pathNodes [
+	^PathNodes
+]
+
+{ #category : #accessing }
 SessionData >> pathNodes: value [
 	PathNodes := value
 ]

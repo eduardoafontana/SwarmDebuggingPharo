@@ -40,7 +40,7 @@ SessionService class >> registerNewSession [
 			breakpoints: nil;
 			codeFiles: OrderedCollection new;
 			events: OrderedCollection new;
-			pathNodes: nil.
+			pathNodes: OrderedCollection new.
 
 	Repository save: CurrentSession
 ]
@@ -48,14 +48,15 @@ SessionService class >> registerNewSession [
 { #category : #'as yet unclassified' }
 SessionService class >> registerStepInto: context [
 
-	| event codeFile |
+	| event event_id pathNode codeFile |
 
 	CurrentSession ifNil: [ ^self ].
 
 	CurrentSession stepMock: context.
-	
+
+	event_id := UUID new printString.	
 	event := Event new
-		id: UUID new printString; 
+		id: event_id; 
 		eventKind: '';
 		detail: '';
 		namespace: '';
@@ -71,6 +72,21 @@ SessionService class >> registerStepInto: context [
 		lineOfCode: '';		
 		created: DateAndTime now.
 	CurrentSession events add: event.
+	
+	pathNode := PathNode new 
+		id: UUID new printString;
+		hash: '';
+		namespace: '';
+		type: '';
+		method: '';
+		parent: nil;
+		parent_Id: '00000000-0000-0000-0000-000000000000';
+		origin: 'StepInto';
+		returnType: '';
+		parameters: OrderedCollection new;
+		event_Id: event_id;
+		created: DateAndTime now.
+	CurrentSession pathNodes add: pathNode.	
 	
 	codeFile := CodeFile new 
 		id: UUID new printString;
