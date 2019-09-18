@@ -21,6 +21,28 @@ SessionService class >> endCurrentSession [
 ]
 
 { #category : #'as yet unclassified' }
+SessionService class >> getNamespace: context [
+
+	|phrase words word namespaceWord stringContext| 
+	
+	context 
+		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
+		ifNotNil: [ stringContext := context asString ].
+
+	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
+
+	phrase := stringContext asString.
+	words := phrase splitOn: '>>'.
+	word := words first.
+
+	[ namespaceWord := (Smalltalk at: word asSymbol) package name  ] 
+		on: Exception
+		do: [ namespaceWord := 'NamespaceNotFound' ].
+	
+	^namespaceWord 
+]
+
+{ #category : #'as yet unclassified' }
 SessionService class >> registerNewSession [ 
 
 	CurrentSession ifNotNil: [ ^self ].
@@ -48,18 +70,20 @@ SessionService class >> registerNewSession [
 { #category : #'as yet unclassified' }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode codeFile |
+	| event event_id pathNode codeFile namespaceWord|
 
 	CurrentSession ifNil: [ ^self ].
-
-	CurrentSession stepMock: context.
+	
+	CurrentSession stepMock: context. "Remove later."
+	
+	namespaceWord := self getNamespace: context.
 
 	event_id := UUID new printString.	
 	event := Event new
 		id: event_id; 
-		eventKind: '';
+		eventKind: 'StepInto';
 		detail: '';
-		namespace: '';
+		namespace: namespaceWord;
 		type: '';
 		typeFullPath: '';
 		method: '';
@@ -76,7 +100,7 @@ SessionService class >> registerStepInto: context [
 	pathNode := PathNode new 
 		id: UUID new printString;
 		hash: '';
-		namespace: '';
+		namespace: namespaceWord;
 		type: '';
 		method: '';
 		parent: nil;
@@ -90,7 +114,7 @@ SessionService class >> registerStepInto: context [
 	
 	codeFile := CodeFile new 
 		id: UUID new printString;
-		path: '';
+		path: 'C:\Users\EduardoAFontana\source\repos\ConsoleApp1\ConsoleApp1\Program.cs';
 		content: '';	
 		created: DateAndTime now.
 	CurrentSession codeFiles add: codeFile.
