@@ -7,7 +7,7 @@ Class {
 	#category : #SwarmDebugging
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #public }
 SessionService class >> endCurrentSession [ 
 
 	CurrentSession ifNil: [ ^self ].
@@ -20,7 +20,25 @@ SessionService class >> endCurrentSession [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #internal }
+SessionService class >> getMethod: context [
+
+	|phrase words methodWord stringContext| 
+	
+	context 
+		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
+		ifNotNil: [ stringContext := context asString ].
+
+	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
+
+	phrase := stringContext asString.
+	words := phrase splitOn: '>>'.
+	methodWord := words last.
+	
+	^methodWord 
+]
+
+{ #category : #internal }
 SessionService class >> getNamespace: context [
 
 	|phrase words word namespaceWord stringContext| 
@@ -42,7 +60,25 @@ SessionService class >> getNamespace: context [
 	^namespaceWord 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #internal }
+SessionService class >> getType: context [
+
+	|phrase words typeWord stringContext| 
+	
+	context 
+		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
+		ifNotNil: [ stringContext := context asString ].
+
+	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
+
+	phrase := stringContext asString.
+	words := phrase splitOn: '>>'.
+	typeWord := words first.
+	
+	^typeWord 
+]
+
+{ #category : #public }
 SessionService class >> registerNewSession [ 
 
 	CurrentSession ifNotNil: [ ^self ].
@@ -67,26 +103,28 @@ SessionService class >> registerNewSession [
 	Repository save: CurrentSession
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode codeFile namespaceWord|
+	| event event_id pathNode codeFile namespaceWord typeWord methodWord|
 
 	CurrentSession ifNil: [ ^self ].
 	
 	CurrentSession stepMock: context. "Remove later."
 	
 	namespaceWord := self getNamespace: context.
+	typeWord := self getType: context.
+	methodWord := self getMethod: context.	
 
 	event_id := UUID new printString.	
 	event := Event new
 		id: event_id; 
 		eventKind: 'StepInto';
-		detail: '';
+		detail: 'TODO';
 		namespace: namespaceWord;
-		type: '';
-		typeFullPath: '';
-		method: '';
+		type: typeWord;
+		typeFullPath: 'TODO';
+		method: methodWord;
 		methodKey: '';
 		methodSignature: '';
 		charStart: nil;
@@ -101,8 +139,8 @@ SessionService class >> registerStepInto: context [
 		id: UUID new printString;
 		hash: '';
 		namespace: namespaceWord;
-		type: '';
-		method: '';
+		type: typeWord;
+		method: methodWord;
 		parent: nil;
 		parent_Id: '00000000-0000-0000-0000-000000000000';
 		origin: 'StepInto';
