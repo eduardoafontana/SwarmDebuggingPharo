@@ -45,6 +45,11 @@ PathNode >> hash: value [
 ]
 
 { #category : #accessing }
+PathNode >> id [
+	^Id
+]
+
+{ #category : #accessing }
 PathNode >> id: value [
 	Id := value
 ]

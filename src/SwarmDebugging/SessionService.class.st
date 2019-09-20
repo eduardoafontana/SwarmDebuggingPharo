@@ -129,7 +129,7 @@ SessionService class >> registerStepInto: context [
 		methodSignature: '';
 		charStart: nil;
 		charEnd: nil;
-		codeFilePath: '';
+		codeFilePath: 'C:\Users\EduardoAFontana\source\repos\ConsoleApp1\ConsoleApp1\Program.cs';
 		lineNumber: nil;
 		lineOfCode: '';		
 		created: DateAndTime now.
@@ -142,9 +142,11 @@ SessionService class >> registerStepInto: context [
 		type: typeWord;
 		method: methodWord;
 		parent: nil;
-		parent_Id: '00000000-0000-0000-0000-000000000000';
+		parent_Id: (CurrentSession pathNodes isEmpty 
+			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
+			ifFalse: [ CurrentSession pathNodes last id ]);
 		origin: 'StepInto';
-		returnType: '';
+		returnType: 'void';
 		parameters: OrderedCollection new;
 		event_Id: event_id;
 		created: DateAndTime now.
