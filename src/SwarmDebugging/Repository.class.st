@@ -8,6 +8,7 @@ Class {
 Repository class >> save: dataObject [
 
 |jsonData|
+
 jsonData := String streamContents: [ :stream | 
    (NeoJSONWriter on: stream)
       prettyPrint: true;

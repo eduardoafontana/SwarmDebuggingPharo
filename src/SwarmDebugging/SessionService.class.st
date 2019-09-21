@@ -78,6 +78,42 @@ SessionService class >> getType: context [
 	^typeWord 
 ]
 
+{ #category : #processAndSend }
+SessionService class >> processCodeFile: typeWord [
+
+	| codeFile sourceCodeStream targetFileAsString alreadyExist |
+
+	CurrentSession ifNil: [ ^self ].
+
+	sourceCodeStream := (String new: 1000) writeStream.
+	(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream.
+	
+	targetFileAsString := (FileLocator imageDirectory / typeWord, 'st') pathString.	
+
+	"CodeFile"
+	codeFile := CodeFile new 
+		id: UUID new printString;
+		path: targetFileAsString;
+		content: (ZnBase64Encoder new encode: (sourceCodeStream contents) asByteArray);
+		created: DateAndTime now.
+	
+	alreadyExist := false.
+	CurrentSession codeFiles do: [ 
+		:file | file path = targetFileAsString ifTrue: [ 
+			alreadyExist := true 
+			] 
+		].
+	
+	alreadyExist ifFalse: [ 
+			CurrentSession codeFiles add: codeFile. 
+			Repository save: CurrentSession.		
+		 ].
+	
+	^targetFileAsString
+	
+
+]
+
 { #category : #public }
 SessionService class >> registerNewSession [ 
 
@@ -106,17 +142,21 @@ SessionService class >> registerNewSession [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode codeFile namespaceWord typeWord methodWord sourceCodeStream|
+	| event event_id pathNode namespaceWord typeWord methodWord filePath |
 
 	CurrentSession ifNil: [ ^self ].
 	
 	CurrentSession stepMock: context. "Remove later."
+
+	event_id := UUID new printString.
 	
 	namespaceWord := self getNamespace: context.
 	typeWord := self getType: context.
 	methodWord := self getMethod: context.	
+		
+	filePath := self processCodeFile: typeWord.	
 
-	event_id := UUID new printString.	
+	"Event"
 	event := Event new
 		id: event_id; 
 		eventKind: 'StepInto';
@@ -129,12 +169,13 @@ SessionService class >> registerStepInto: context [
 		methodSignature: '';
 		charStart: nil;
 		charEnd: nil;
-		codeFilePath: 'C:\Users\EduardoAFontana\source\repos\ConsoleApp1\ConsoleApp1\Program.cs';
+		codeFilePath: filePath;
 		lineNumber: nil;
 		lineOfCode: '';		
 		created: DateAndTime now.
 	CurrentSession events add: event.
 	
+	"PathNode"
 	pathNode := PathNode new 
 		id: UUID new printString;
 		hash: '';
@@ -152,16 +193,7 @@ SessionService class >> registerStepInto: context [
 		created: DateAndTime now.
 	CurrentSession pathNodes add: pathNode.	
 	
-	sourceCodeStream := (String new: 1000) writeStream.
-	(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream.
 	
-	codeFile := CodeFile new 
-		id: UUID new printString;
-		path: 'C:\Users\EduardoAFontana\source\repos\ConsoleApp1\ConsoleApp1\Program.cs';
-		content: (ZnBase64Encoder new encode: (sourceCodeStream contents) asByteArray);
-		created: DateAndTime now.
-	CurrentSession codeFiles add: codeFile.
-
 	Repository save: CurrentSession.
 	
 

@@ -37,6 +37,11 @@ CodeFile >> id: value [
 ]
 
 { #category : #accessing }
+CodeFile >> path [
+	^Path
+]
+
+{ #category : #accessing }
 CodeFile >> path: value [
 	Path := value
 ]
