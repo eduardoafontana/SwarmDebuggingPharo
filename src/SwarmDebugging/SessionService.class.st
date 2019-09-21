@@ -106,7 +106,7 @@ SessionService class >> registerNewSession [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode codeFile namespaceWord typeWord methodWord|
+	| event event_id pathNode codeFile namespaceWord typeWord methodWord sourceCodeStream|
 
 	CurrentSession ifNil: [ ^self ].
 	
@@ -152,10 +152,13 @@ SessionService class >> registerStepInto: context [
 		created: DateAndTime now.
 	CurrentSession pathNodes add: pathNode.	
 	
+	sourceCodeStream := (String new: 1000) writeStream.
+	(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream.
+	
 	codeFile := CodeFile new 
 		id: UUID new printString;
 		path: 'C:\Users\EduardoAFontana\source\repos\ConsoleApp1\ConsoleApp1\Program.cs';
-		content: '';	
+		content: (ZnBase64Encoder new encode: (sourceCodeStream contents) asByteArray);
 		created: DateAndTime now.
 	CurrentSession codeFiles add: codeFile.
 
