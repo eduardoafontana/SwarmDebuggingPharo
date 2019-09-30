@@ -79,15 +79,22 @@ SessionService class >> getType: context [
 ]
 
 { #category : #processAndSend }
-SessionService class >> processCodeFile: typeWord [
+SessionService class >> processCodeFile: context [
 
-	| codeFile sourceCodeStream targetFileAsString alreadyExist |
+	| codeFile sourceCodeStream targetFileAsString alreadyExist typeWord |
 
 	CurrentSession ifNil: [ ^self ].
 
+	typeWord:= context methodClass asString.
+
 	sourceCodeStream := (String new: 1000) writeStream.
-	(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream.
-	
+	context methodSelector asString = 'DoIt' 
+		ifTrue: [ sourceCodeStream := context sourceCode asString. ]
+		ifFalse: [ 
+			(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream. 
+			"UndefinedObject on transcript is because fileOutOn: - review later."
+		].
+
 	targetFileAsString := (FileLocator imageDirectory / typeWord, 'st') pathString.	
 
 	"CodeFile"
@@ -142,19 +149,26 @@ SessionService class >> registerNewSession [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode namespaceWord typeWord methodWord filePath |
+	| event event_id pathNode namespaceWord typeWord methodWord filePath lineOfCode |
 
 	CurrentSession ifNil: [ ^self ].
+	
+	"Falta vincular a linha de codigo sobre o arquivo. Para isto, iremos criar um algoritmo de busca que pega a partir do metodo e bate o codigo.
+	Refatorar abaixo removendo o getType e GetMethod"
 	
 	CurrentSession stepMock: context. "Remove later."
 
 	event_id := UUID new printString.
-	
+
 	namespaceWord := self getNamespace: context.
 	typeWord := self getType: context.
-	methodWord := self getMethod: context.	
-		
-	filePath := self processCodeFile: typeWord.	
+	methodWord := self getMethod: context.
+
+	filePath := self processCodeFile: context.
+
+	lineOfCode := (context method sourceNodeForPC: context pc).
+	lineOfCode := lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop.
+	"Transcript cr; show: 'lineOfCode ', lineOfCode asString; cr."
 
 	"Event"
 	event := Event new
