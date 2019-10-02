@@ -81,9 +81,12 @@ SessionService class >> getType: context [
 { #category : #processAndSend }
 SessionService class >> processCodeFile: context [
 
-	| codeFile sourceCodeStream targetFileAsString alreadyExist typeWord |
+	| codeFile sourceCodeStream codeFileProperty alreadyExist typeWord lineOfCode lineCounter |
 
 	CurrentSession ifNil: [ ^self ].
+
+	codeFileProperty := CodeFileProperty new charStart: 0; charEnd: 0; lineNumber: 0;
+		lineOfCode: 'NotDefined'; codeFilePath: 'NotDefined'.
 
 	typeWord:= context methodClass asString.
 
@@ -95,18 +98,30 @@ SessionService class >> processCodeFile: context [
 			"UndefinedObject on transcript is because fileOutOn: - review later."
 		].
 
-	targetFileAsString := (FileLocator imageDirectory / typeWord, 'st') pathString.	
+	codeFileProperty codeFilePath: (FileLocator imageDirectory / typeWord, 'st') pathString.	
+
+	lineOfCode := (context method sourceNodeForPC: context pc).
+	codeFileProperty lineOfCode: ( lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop ) asString.
+	
+	lineCounter := 0.
+	sourceCodeStream contents lines do: [ 
+		:line |
+			lineCounter := lineCounter + 1. 
+			(line indexOfSubCollection: codeFileProperty lineOfCode) > 0 ifTrue: [ 
+				codeFileProperty lineNumber: lineCounter.
+			] 
+		].	
 
 	"CodeFile"
 	codeFile := CodeFile new 
 		id: UUID new printString;
-		path: targetFileAsString;
+		path: codeFileProperty codeFilePath;
 		content: (ZnBase64Encoder new encode: (sourceCodeStream contents) asByteArray);
 		created: DateAndTime now.
 	
 	alreadyExist := false.
 	CurrentSession codeFiles do: [ 
-		:file | file path = targetFileAsString ifTrue: [ 
+		:file | file path = codeFileProperty codeFilePath ifTrue: [ 
 			alreadyExist := true 
 			] 
 		].
@@ -116,7 +131,7 @@ SessionService class >> processCodeFile: context [
 			Repository save: CurrentSession.		
 		 ].
 	
-	^targetFileAsString
+	^codeFileProperty
 	
 
 ]
@@ -149,7 +164,7 @@ SessionService class >> registerNewSession [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode namespaceWord typeWord methodWord filePath lineOfCode |
+	| event event_id pathNode namespaceWord typeWord methodWord codeFileProperty |
 
 	CurrentSession ifNil: [ ^self ].
 	
@@ -164,11 +179,7 @@ SessionService class >> registerStepInto: context [
 	typeWord := self getType: context.
 	methodWord := self getMethod: context.
 
-	filePath := self processCodeFile: context.
-
-	lineOfCode := (context method sourceNodeForPC: context pc).
-	lineOfCode := lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop.
-	"Transcript cr; show: 'lineOfCode ', lineOfCode asString; cr."
+	codeFileProperty := self processCodeFile: context.
 
 	"Event"
 	event := Event new
@@ -181,11 +192,11 @@ SessionService class >> registerStepInto: context [
 		method: methodWord;
 		methodKey: '';
 		methodSignature: '';
-		charStart: nil;
-		charEnd: nil;
-		codeFilePath: filePath;
-		lineNumber: nil;
-		lineOfCode: '';		
+		charStart: codeFileProperty charStart;
+		charEnd: codeFileProperty charEnd;
+		codeFilePath: codeFileProperty codeFilePath;
+		lineNumber: codeFileProperty lineNumber;
+		lineOfCode: codeFileProperty lineOfCode;
 		created: DateAndTime now.
 	CurrentSession events add: event.
 	
