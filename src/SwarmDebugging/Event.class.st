@@ -18,7 +18,7 @@ Class {
 		'LineOfCode',
 		'Created'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }

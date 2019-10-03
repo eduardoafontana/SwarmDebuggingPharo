@@ -8,7 +8,7 @@ Class {
 		'LineNumber',
 		'LineOfCode'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-DataModel'
 }
 
 { #category : #accessing }

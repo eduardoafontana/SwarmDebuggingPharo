@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'InternalVar'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-Test'
 }
 
 { #category : #'as yet unclassified' }

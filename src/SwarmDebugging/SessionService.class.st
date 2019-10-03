@@ -4,7 +4,7 @@ Class {
 	#classInstVars : [
 		'CurrentSession'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-Service'
 }
 
 { #category : #public }

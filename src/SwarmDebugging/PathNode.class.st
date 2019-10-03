@@ -15,7 +15,7 @@ Class {
 		'Created',
 		'Event_Id'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }

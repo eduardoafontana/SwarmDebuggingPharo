@@ -7,7 +7,7 @@ Class {
 		'Content',
 		'Created'
 	],
-	#category : #SwarmDebugging
+	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }
