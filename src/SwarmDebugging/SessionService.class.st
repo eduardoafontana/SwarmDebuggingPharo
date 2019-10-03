@@ -21,61 +21,19 @@ SessionService class >> endCurrentSession [
 ]
 
 { #category : #internal }
-SessionService class >> getMethod: context [
+SessionService class >> getNamespace: typeWord [
 
-	|phrase words methodWord stringContext| 
+	|namespaceWord stringContext| 
 	
-	context 
-		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
-		ifNotNil: [ stringContext := context asString ].
+	typeWord 
+		ifNil: [ stringContext := 'NamespaceNotFound' ]
+		ifNotNil: [ stringContext := typeWord ].
 
-	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
-
-	phrase := stringContext asString.
-	words := phrase splitOn: '>>'.
-	methodWord := words last.
-	
-	^methodWord 
-]
-
-{ #category : #internal }
-SessionService class >> getNamespace: context [
-
-	|phrase words word namespaceWord stringContext| 
-	
-	context 
-		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
-		ifNotNil: [ stringContext := context asString ].
-
-	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
-
-	phrase := stringContext asString.
-	words := phrase splitOn: '>>'.
-	word := words first.
-
-	[ namespaceWord := (Smalltalk at: word asSymbol) package name  ] 
+	[ namespaceWord := (Smalltalk at: stringContext asSymbol) package name  ] 
 		on: Exception
 		do: [ namespaceWord := 'NamespaceNotFound' ].
 	
 	^namespaceWord 
-]
-
-{ #category : #internal }
-SessionService class >> getType: context [
-
-	|phrase words typeWord stringContext| 
-	
-	context 
-		ifNil: [ stringContext := 'NoContextSent>>NoContextSent' ]
-		ifNotNil: [ stringContext := context asString ].
-
-	((stringContext indexOfAnyOf: '>>') = 0) ifTrue: [ stringContext := 'NoSeparatorFounded>>NoSeparatorFounded' ].
-
-	phrase := stringContext asString.
-	words := phrase splitOn: '>>'.
-	typeWord := words first.
-	
-	^typeWord 
 ]
 
 { #category : #processAndSend }
@@ -166,20 +124,15 @@ SessionService class >> registerNewSession: context [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode namespaceWord typeWord methodWord codeFileProperty |
+	| event event_id pathNode namespaceWord codeFileProperty |
 
 	CurrentSession ifNil: [ ^self ].
-	
-	"Falta vincular a linha de codigo sobre o arquivo. Para isto, iremos criar um algoritmo de busca que pega a partir do metodo e bate o codigo.
-	Refatorar abaixo removendo o getType e GetMethod"
 	
 	CurrentSession stepMock: context. "Remove later."
 
 	event_id := UUID new printString.
 
-	namespaceWord := self getNamespace: context.
-	typeWord := self getType: context.
-	methodWord := self getMethod: context.
+	namespaceWord := self getNamespace: context methodClass asString.
 
 	codeFileProperty := self processCodeFile: context.
 
@@ -189,9 +142,9 @@ SessionService class >> registerStepInto: context [
 		eventKind: 'StepInto';
 		detail: 'TODO';
 		namespace: namespaceWord;
-		type: typeWord;
+		type: context methodClass asString;
 		typeFullPath: 'TODO';
-		method: methodWord;
+		method: context methodSelector asString;
 		methodKey: '';
 		methodSignature: '';
 		charStart: codeFileProperty charStart;
@@ -207,8 +160,8 @@ SessionService class >> registerStepInto: context [
 		id: UUID new printString;
 		hash: '';
 		namespace: namespaceWord;
-		type: typeWord;
-		method: methodWord;
+		type: context methodClass asString;
+		method: context methodSelector asString;
 		parent: nil;
 		parent_Id: (CurrentSession pathNodes isEmpty 
 			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
