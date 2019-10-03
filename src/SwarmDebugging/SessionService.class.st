@@ -137,7 +137,7 @@ SessionService class >> processCodeFile: context [
 ]
 
 { #category : #public }
-SessionService class >> registerNewSession [ 
+SessionService class >> registerNewSession: context [
 
 	CurrentSession ifNotNil: [ ^self ].
 
@@ -158,7 +158,9 @@ SessionService class >> registerNewSession [
 			events: OrderedCollection new;
 			pathNodes: OrderedCollection new.
 
-	Repository save: CurrentSession
+	Repository save: CurrentSession.
+	
+	self registerStepInto: context.
 ]
 
 { #category : #public }

@@ -3,7 +3,7 @@ Extension { #name : #DebugAction }
 { #category : #'*SwarmDebugging' }
 DebugAction >> asGlamourAction [
 
-	SessionService registerNewSession.
+	SessionService registerNewSession: self currentContext.
 
 	^ ((GLMGenericAction new) 
 			action: [ self execute ]; 
