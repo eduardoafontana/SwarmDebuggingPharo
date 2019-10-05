@@ -95,6 +95,62 @@ SessionService class >> processCodeFile: context [
 ]
 
 { #category : #public }
+SessionService class >> processStep: context stepName: stepName [
+
+	| event event_id pathNode namespaceWord codeFileProperty |
+
+	CurrentSession ifNil: [ ^self ].
+
+	event_id := UUID new printString.
+
+	namespaceWord := self getNamespace: context methodClass asString.
+
+	codeFileProperty := self processCodeFile: context.
+
+	"Event"
+	event := Event new
+		id: event_id; 
+		eventKind: 'StepOver';
+		detail: 'TODO';
+		namespace: namespaceWord;
+		type: context methodClass asString;
+		typeFullPath: 'TODO';
+		method: context methodSelector asString;
+		methodKey: '';
+		methodSignature: '';
+		charStart: codeFileProperty charStart;
+		charEnd: codeFileProperty charEnd;
+		codeFilePath: codeFileProperty codeFilePath;
+		lineNumber: codeFileProperty lineNumber;
+		lineOfCode: codeFileProperty lineOfCode;
+		created: DateAndTime now.
+	CurrentSession events add: event.
+	
+	"PathNode"
+	pathNode := PathNode new 
+		id: UUID new printString;
+		hash: '';
+		namespace: namespaceWord;
+		type: context methodClass asString;
+		method: context methodSelector asString;
+		parent: nil;
+		parent_Id: (CurrentSession pathNodes isEmpty 
+			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
+			ifFalse: [ CurrentSession pathNodes last id ]);
+		origin: 'StepOver';
+		returnType: 'void';
+		parameters: OrderedCollection new;
+		event_Id: event_id;
+		created: DateAndTime now.
+	CurrentSession pathNodes add: pathNode.	
+	
+	
+	Repository save: CurrentSession.
+	
+
+]
+
+{ #category : #public }
 SessionService class >> registerNewSession: context [
 
 	CurrentSession ifNotNil: [ ^self ].
@@ -124,55 +180,13 @@ SessionService class >> registerNewSession: context [
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
-	| event event_id pathNode namespaceWord codeFileProperty |
+	self processStep: context stepName: 'StepInto'.
+]
 
-	CurrentSession ifNil: [ ^self ].
+{ #category : #public }
+SessionService class >> registerStepOver: context [
 
-	event_id := UUID new printString.
-
-	namespaceWord := self getNamespace: context methodClass asString.
-
-	codeFileProperty := self processCodeFile: context.
-
-	"Event"
-	event := Event new
-		id: event_id; 
-		eventKind: 'StepInto';
-		detail: 'TODO';
-		namespace: namespaceWord;
-		type: context methodClass asString;
-		typeFullPath: 'TODO';
-		method: context methodSelector asString;
-		methodKey: '';
-		methodSignature: '';
-		charStart: codeFileProperty charStart;
-		charEnd: codeFileProperty charEnd;
-		codeFilePath: codeFileProperty codeFilePath;
-		lineNumber: codeFileProperty lineNumber;
-		lineOfCode: codeFileProperty lineOfCode;
-		created: DateAndTime now.
-	CurrentSession events add: event.
-	
-	"PathNode"
-	pathNode := PathNode new 
-		id: UUID new printString;
-		hash: '';
-		namespace: namespaceWord;
-		type: context methodClass asString;
-		method: context methodSelector asString;
-		parent: nil;
-		parent_Id: (CurrentSession pathNodes isEmpty 
-			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
-			ifFalse: [ CurrentSession pathNodes last id ]);
-		origin: 'StepInto';
-		returnType: 'void';
-		parameters: OrderedCollection new;
-		event_Id: event_id;
-		created: DateAndTime now.
-	CurrentSession pathNodes add: pathNode.	
-	
-	
-	Repository save: CurrentSession.
+	self processStep: context stepName: 'StepOver'.
 	
 
 ]
