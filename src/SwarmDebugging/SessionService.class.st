@@ -127,8 +127,6 @@ SessionService class >> registerStepInto: context [
 	| event event_id pathNode namespaceWord codeFileProperty |
 
 	CurrentSession ifNil: [ ^self ].
-	
-	CurrentSession stepMock: context. "Remove later."
 
 	event_id := UUID new printString.
 

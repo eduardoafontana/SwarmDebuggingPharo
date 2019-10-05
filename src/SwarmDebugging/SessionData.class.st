@@ -109,12 +109,6 @@ SessionData >> started: value [
 ]
 
 { #category : #accessing }
-SessionData >> stepMock: value [
-
-	Description := Description, ' StepMock: ', value asString 
-]
-
-{ #category : #accessing }
 SessionData >> taskAction: value [
 	TaskAction := value
 ]
