@@ -110,7 +110,7 @@ SessionService class >> processStep: context stepName: stepName [
 	"Event"
 	event := Event new
 		id: event_id; 
-		eventKind: 'StepOver';
+		eventKind: stepName;
 		detail: 'TODO';
 		namespace: namespaceWord;
 		type: context methodClass asString;
@@ -137,7 +137,7 @@ SessionService class >> processStep: context stepName: stepName [
 		parent_Id: (CurrentSession pathNodes isEmpty 
 			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
 			ifFalse: [ CurrentSession pathNodes last id ]);
-		origin: 'StepOver';
+		origin: stepName;
 		returnType: 'void';
 		parameters: OrderedCollection new;
 		event_Id: event_id;
