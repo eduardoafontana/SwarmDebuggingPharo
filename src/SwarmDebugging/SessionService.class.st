@@ -43,8 +43,7 @@ SessionService class >> processCodeFile: context [
 
 	CurrentSession ifNil: [ ^self ].
 
-	codeFileProperty := CodeFileProperty new charStart: 0; charEnd: 0; lineNumber: 0;
-		lineOfCode: 'NotDefined'; codeFilePath: 'NotDefined'.
+	codeFileProperty := CodeFileProperty getInstance.
 
 	typeWord:= context methodClass asString.
 

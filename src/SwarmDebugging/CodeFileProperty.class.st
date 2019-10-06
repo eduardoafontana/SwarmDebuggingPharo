@@ -11,6 +11,12 @@ Class {
 	#category : #'SwarmDebugging-DataModel'
 }
 
+{ #category : #'instance creation' }
+CodeFileProperty class >> getInstance [ 
+	^CodeFileProperty new charStart: 0; charEnd: 0; lineNumber: 0;
+		lineOfCode: 'NotDefined'; codeFilePath: 'NotDefined'.
+]
+
 { #category : #accessing }
 CodeFileProperty >> charEnd [
 	^CharEnd
