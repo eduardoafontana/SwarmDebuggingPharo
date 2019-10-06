@@ -46,6 +46,9 @@ SessionService class >> processCodeFile: context [
 	codeFileProperty := CodeFileProperty getInstance.
 
 	typeWord:= context methodClass asString.
+	((typeWord indexOfSubCollection: ' class') asNumber > 1) ifTrue: [
+			typeWord := typeWord copyFrom: 1 to: (typeWord indexOfSubCollection: ' class') - 1
+		].
 
 	sourceCodeStream := (String new: 1000) writeStream.
 	context methodSelector asString = 'DoIt' 
