@@ -157,49 +157,34 @@ SessionService class >> registerBreakpoint: nodeContext [
 
 	| parentLocal parentLocalLineOfCode |
 
-	Transcript cr.
+	nodeContext isNil ifTrue: [ ^self ].
+
 	parentLocal := nil.
 	parentLocalLineOfCode := nil.
 
-	nodeContext isNil 
-		ifTrue: [ Transcript cr; show: 'NCénulo' ]
-		ifFalse: [ 
-			Transcript cr; show: 'NP: ', nodeContext class asString.
+	nodeContext class asString = 'RBInstanceVariableNode' ifTrue: [ 
+			Transcript show: 'assim: RBInstanceVariableNode'.
+			
+			parentLocalLineOfCode := nodeContext parent value.
+			parentLocal := nodeContext parent parent parent.
+		 ]
+	ifFalse: [ nodeContext class asString = 'RBAssignmentNode' ifTrue: [
+			Transcript show: 'assim: RBAssignmentNode'.
 			
 			(nodeContext value class asString = 'RBMessageNode') ifTrue: [
 				parentLocalLineOfCode := nodeContext value.
-			].
-			
-			nodeContext parent isNil 
-				ifTrue: [ Transcript show: 'NCPénulo' ]
-				ifFalse: [ Transcript cr; show: 'NCP: ', nodeContext parent class asString.
-					
-					(nodeContext parent value class asString = 'RBMessageNode') ifTrue: [
-						parentLocalLineOfCode := nodeContext parent value.
-					].
-					
-					nodeContext parent parent isNil 
-						ifTrue: [ Transcript show: 'NCPPénulo' ]
-						ifFalse: [ Transcript cr; show: 'NCPP: ', nodeContext parent parent class asString.
-														
-							parentLocal := nodeContext parent parent.
-							
-							nodeContext parent parent parent isNil 
-								ifTrue: [ Transcript show: 'NCPPPénulo' ]
-								ifFalse: [ 
-									Transcript cr; show: 'NCPPP: ', nodeContext parent parent parent class asString.
-									parentLocal := nodeContext parent parent parent.
-									].									
-							].					 
-					].		
-			].
-			
+				parentLocal := nodeContext parent parent.
+			].			
+		]
+	ifFalse: [
+			Transcript show: 'Unexpected Breakpoint Context.'.
+		]].			 
+
 	parentLocal isNil ifFalse: [ 
 			Transcript cr; 
 				show: 'PL: ', parentLocal source asString; cr; 
 				show: parentLocal selector asString; cr; 
 				show: parentLocal compilationContext getClass
-				"show: (parentLocal source copyFrom: parentLocal start parentLocal: self stop)"
 		 ].
 	
 	parentLocalLineOfCode isNil ifFalse: [ 			
