@@ -150,6 +150,14 @@ SessionService class >> processStep: context stepName: stepName [
 ]
 
 { #category : #public }
+SessionService class >> registerBreakpoint: nodeContext [
+
+" Transcript cr; show: 'nodeContext methodClass: ', nodeContext methodClass asString."
+"Transcript cr; show: 'executou: ', self executou asString."
+	"self executou isNil ifTrue: [ self executou: 'false'. self haltOnce. ]."
+]
+
+{ #category : #public }
 SessionService class >> registerNewSession: context [
 
 	CurrentSession ifNotNil: [ ^self ].
