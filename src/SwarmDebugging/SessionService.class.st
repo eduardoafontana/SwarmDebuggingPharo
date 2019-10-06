@@ -155,6 +155,74 @@ SessionService class >> processStep: context stepName: stepName [
 { #category : #public }
 SessionService class >> registerBreakpoint: nodeContext [
 
+	| parentLocal parentLocalLineOfCode |
+
+	Transcript cr.
+	parentLocal := nil.
+	parentLocalLineOfCode := nil.
+
+	nodeContext isNil 
+		ifTrue: [ Transcript cr; show: 'NCénulo' ]
+		ifFalse: [ 
+			Transcript cr; show: 'NP: ', nodeContext class asString.
+			
+			(nodeContext value class asString = 'RBMessageNode') ifTrue: [
+				parentLocalLineOfCode := nodeContext value.
+			].
+			
+			nodeContext parent isNil 
+				ifTrue: [ Transcript show: 'NCPénulo' ]
+				ifFalse: [ Transcript cr; show: 'NCP: ', nodeContext parent class asString.
+					
+					(nodeContext parent value class asString = 'RBMessageNode') ifTrue: [
+						parentLocalLineOfCode := nodeContext parent value.
+					].
+					
+					nodeContext parent parent isNil 
+						ifTrue: [ Transcript show: 'NCPPénulo' ]
+						ifFalse: [ Transcript cr; show: 'NCPP: ', nodeContext parent parent class asString.
+														
+							parentLocal := nodeContext parent parent.
+							
+							nodeContext parent parent parent isNil 
+								ifTrue: [ Transcript show: 'NCPPPénulo' ]
+								ifFalse: [ 
+									Transcript cr; show: 'NCPPP: ', nodeContext parent parent parent class asString.
+									parentLocal := nodeContext parent parent parent.
+									].									
+							].					 
+					].		
+			].
+			
+	parentLocal isNil ifFalse: [ 
+			Transcript cr; 
+				show: 'PL: ', parentLocal source asString; cr; 
+				show: parentLocal selector asString; cr; 
+				show: parentLocal compilationContext getClass
+				"show: (parentLocal source copyFrom: parentLocal start parentLocal: self stop)"
+		 ].
+	
+	parentLocalLineOfCode isNil ifFalse: [ 			
+			Transcript cr; show: 'LineOfCode: ', (parentLocalLineOfCode source copyFrom: parentLocalLineOfCode start to: parentLocalLineOfCode stop) asString
+		 ].
+
+"self source copyFrom: self start to: self stop"
+	"Transcript cr; show: nodeContext parent parent parent source."
+"	Transcript cr; show: nodeContext parent parent parent source.
+	Transcript cr; show: nodeContext parent parent parent class. RBMethodNode
+	Transcript cr; show: nodeContext parent parent parent selector.
+	Transcript cr; show: nodeContext parent parent parent compilationContext getClass."
+	
+	
+	
+	"parentContext := BreakpointProperty processNodeGetParentContext: nodeContext."
+	
+	"teste := parentContext source asString."
+	
+	"Transcript cr; show: 'source: ', parentContext source asString.
+	Transcript cr; show: 'selector: ', parentContext selector asString.
+	Transcript cr; show: 'compilationContext getClass: ', parentContext compilationContext getClass asString."
+	
 " Transcript cr; show: 'nodeContext methodClass: ', nodeContext methodClass asString."
 "Transcript cr; show: 'executou: ', self executou asString."
 	"self executou isNil ifTrue: [ self executou: 'false'. self haltOnce. ]."
