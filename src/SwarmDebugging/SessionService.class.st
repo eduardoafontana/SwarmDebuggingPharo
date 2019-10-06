@@ -37,51 +37,24 @@ SessionService class >> getNamespace: typeWord [
 ]
 
 { #category : #processAndSend }
-SessionService class >> processCodeFile: context [
+SessionService class >> processCodeFile: contextProperty [
 
-	| codeFile sourceCodeStream codeFileProperty alreadyExist typeWord lineOfCode lineCounter |
+	| codeFile codeFilePath alreadyExist |
 
 	CurrentSession ifNil: [ ^self ].
 
-	codeFileProperty := CodeFileProperty getInstance.
-
-	typeWord:= context methodClass asString.
-	((typeWord indexOfSubCollection: ' class') asNumber > 1) ifTrue: [
-			typeWord := typeWord copyFrom: 1 to: (typeWord indexOfSubCollection: ' class') - 1
-		].
-
-	sourceCodeStream := (String new: 1000) writeStream.
-	context methodSelector asString = 'DoIt' 
-		ifTrue: [ sourceCodeStream := context sourceCode asString. ]
-		ifFalse: [ 
-			(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream. 
-			"UndefinedObject on transcript is because fileOutOn: - review later."
-		].
-
-	codeFileProperty codeFilePath: (FileLocator imageDirectory / typeWord, 'st') pathString.	
-
-	lineOfCode := (context method sourceNodeForPC: context pc).
-	codeFileProperty lineOfCode: ( lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop ) asString.
-	
-	lineCounter := 0.
-	sourceCodeStream contents lines do: [ 
-		:line |
-			lineCounter := lineCounter + 1. 
-			(line indexOfSubCollection: codeFileProperty lineOfCode) > 0 ifTrue: [ 
-				codeFileProperty lineNumber: lineCounter.
-			] 
-		].	
+	codeFilePath := (FileLocator imageDirectory / contextProperty className, 'st') pathString.	
 
 	"CodeFile"
 	codeFile := CodeFile new 
 		id: UUID new printString;
-		path: codeFileProperty codeFilePath;
-		content: (ZnBase64Encoder new encode: (sourceCodeStream contents) asByteArray);
+		path: codeFilePath;
+		content: (ZnBase64Encoder new encode: (contextProperty sourceCode) asByteArray);
 		created: DateAndTime now.
 	
 	alreadyExist := false.
 	CurrentSession codeFiles do: [ 
-		:file | file path = codeFileProperty codeFilePath ifTrue: [ 
+		:file | file path = codeFilePath ifTrue: [ 
 			alreadyExist := true 
 			] 
 		].
@@ -91,7 +64,7 @@ SessionService class >> processCodeFile: context [
 			Repository save: CurrentSession.		
 		 ].
 	
-	^codeFileProperty
+	^codeFilePath
 	
 
 ]
@@ -99,32 +72,32 @@ SessionService class >> processCodeFile: context [
 { #category : #public }
 SessionService class >> processStep: context stepName: stepName [
 
-	| event event_id pathNode namespaceWord codeFileProperty |
+	| event event_id pathNode codeFilePath contextProperty |
 
 	CurrentSession ifNil: [ ^self ].
 
+	contextProperty	:= self processStepContext: context.
+
+	codeFilePath := self processCodeFile: contextProperty.
+
 	event_id := UUID new printString.
-
-	namespaceWord := self getNamespace: context methodClass asString.
-
-	codeFileProperty := self processCodeFile: context.
 
 	"Event"
 	event := Event new
 		id: event_id; 
 		eventKind: stepName;
 		detail: 'TODO';
-		namespace: namespaceWord;
-		type: context methodClass asString;
+		namespace: contextProperty packageName;
+		type: contextProperty className;
 		typeFullPath: 'TODO';
-		method: context methodSelector asString;
+		method: contextProperty methodName;
 		methodKey: '';
 		methodSignature: '';
-		charStart: codeFileProperty charStart;
-		charEnd: codeFileProperty charEnd;
-		codeFilePath: codeFileProperty codeFilePath;
-		lineNumber: codeFileProperty lineNumber;
-		lineOfCode: codeFileProperty lineOfCode;
+		charStart: contextProperty charStart;
+		charEnd: contextProperty charEnd;
+		codeFilePath: codeFilePath;
+		lineNumber: contextProperty lineNumber;
+		lineOfCode: contextProperty lineOfCode;
 		created: DateAndTime now.
 	CurrentSession events add: event.
 	
@@ -132,9 +105,9 @@ SessionService class >> processStep: context stepName: stepName [
 	pathNode := PathNode new 
 		id: UUID new printString;
 		hash: '';
-		namespace: namespaceWord;
-		type: context methodClass asString;
-		method: context methodSelector asString;
+		namespace: contextProperty packageName;
+		type: contextProperty className;
+		method: contextProperty methodName;
 		parent: nil;
 		parent_Id: (CurrentSession pathNodes isEmpty 
 			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
@@ -150,6 +123,50 @@ SessionService class >> processStep: context stepName: stepName [
 	Repository save: CurrentSession.
 	
 
+]
+
+{ #category : #public }
+SessionService class >> processStepContext: context [
+
+	| typeWord sourceCodeStream lineOfCode lineCounter lineNumber |
+	
+	typeWord := context methodClass asString.
+	((typeWord indexOfSubCollection: ' class') asNumber > 1) ifTrue: [
+			typeWord := typeWord copyFrom: 1 to: (typeWord indexOfSubCollection: ' class') - 1
+		].
+	
+	sourceCodeStream := (String new: 1000) writeStream.
+	context methodSelector asString = 'DoIt' 
+		ifTrue: [ sourceCodeStream := context sourceCode asString. ]
+		ifFalse: [ 
+			(Smalltalk at: typeWord asSymbol) fileOutOn: sourceCodeStream. 
+			"UndefinedObject on transcript is because fileOutOn: - review later."
+		].
+
+	lineOfCode := (context method sourceNodeForPC: context pc).
+	lineOfCode := ( lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop ) asString.
+	
+	lineNumber := 0.
+	lineCounter := 0.
+	sourceCodeStream contents lines do: [ 
+		:line |
+			lineCounter := lineCounter + 1. 
+			(line indexOfSubCollection: lineOfCode) > 0 ifTrue: [ 
+				lineNumber := lineCounter.
+			] 
+		].	
+
+	^ContextProperty getInstance
+		methodName: context methodSelector asString;
+		className: typeWord;
+		packageName: (self getNamespace: typeWord);
+		sourceCode: sourceCodeStream contents;
+		lineOfCode: lineOfCode;
+		lineNumber: lineNumber;
+		charStart: 0;
+		charEnd: 0.
+		
+	
 ]
 
 { #category : #public }
