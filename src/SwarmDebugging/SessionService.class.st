@@ -70,22 +70,18 @@ SessionService class >> processCodeFile: contextProperty [
 ]
 
 { #category : #public }
-SessionService class >> processStep: context stepName: stepName [
+SessionService class >> processEvent: contextProperty [
 
-	| event event_id pathNode codeFilePath contextProperty |
+	| event event_id |
 
 	CurrentSession ifNil: [ ^self ].
-
-	contextProperty	:= self processStepContext: context.
-
-	codeFilePath := self processCodeFile: contextProperty.
 
 	event_id := UUID new printString.
 
 	"Event"
 	event := Event new
 		id: event_id; 
-		eventKind: stepName;
+		eventKind: contextProperty stepName;
 		detail: 'TODO';
 		namespace: contextProperty packageName;
 		type: contextProperty className;
@@ -95,11 +91,33 @@ SessionService class >> processStep: context stepName: stepName [
 		methodSignature: '';
 		charStart: contextProperty charStart;
 		charEnd: contextProperty charEnd;
-		codeFilePath: codeFilePath;
+		codeFilePath: contextProperty filePath;
 		lineNumber: contextProperty lineNumber;
 		lineOfCode: contextProperty lineOfCode;
 		created: DateAndTime now.
 	CurrentSession events add: event.
+	
+	Repository save: CurrentSession.
+	
+	^event_id.
+	
+
+]
+
+{ #category : #public }
+SessionService class >> processStep: context stepName: stepName [
+
+	| event_id pathNode contextProperty |
+
+	CurrentSession ifNil: [ ^self ].
+
+	contextProperty	:= self processStepContext: context.
+
+	contextProperty filePath: (self processCodeFile: contextProperty).
+	
+	contextProperty stepName: stepName.
+
+	event_id := self processEvent: contextProperty.
 	
 	"PathNode"
 	pathNode := PathNode new 

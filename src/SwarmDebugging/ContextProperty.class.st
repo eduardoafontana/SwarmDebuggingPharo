@@ -9,7 +9,9 @@ Class {
 		'LineOfCode',
 		'LineNumber',
 		'CharStart',
-		'CharEnd'
+		'CharEnd',
+		'StepName',
+		'FilePath'
 	],
 	#category : #'SwarmDebugging-DataModel'
 }
@@ -55,6 +57,16 @@ ContextProperty >> className [
 { #category : #'as yet unclassified' }
 ContextProperty >> className: value [
 	ClassName := value
+]
+
+{ #category : #'as yet unclassified' }
+ContextProperty >> filePath [
+	^FilePath
+]
+
+{ #category : #'as yet unclassified' }
+ContextProperty >> filePath: value [
+	FilePath := value
 ]
 
 { #category : #'as yet unclassified' }
@@ -105,4 +117,14 @@ ContextProperty >> sourceCode [
 { #category : #'as yet unclassified' }
 ContextProperty >> sourceCode: value [
 	SourceCode := value
+]
+
+{ #category : #'as yet unclassified' }
+ContextProperty >> stepName [
+	^StepName
+]
+
+{ #category : #'as yet unclassified' }
+ContextProperty >> stepName: value [
+	StepName := value
 ]
