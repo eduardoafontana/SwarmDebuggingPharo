@@ -239,7 +239,7 @@ SessionService class >> registerNewSession: context [
 			taskCreated: nil;
 			taskTotalSessionTime: '00:00:00.0000000';
 			projectName: 'Swarm on Pharo';
-			breakpoints: nil;
+			breakpoints: OrderedCollection new;
 			codeFiles: OrderedCollection new;
 			events: OrderedCollection new;
 			pathNodes: OrderedCollection new.
