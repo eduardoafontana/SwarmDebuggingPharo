@@ -190,7 +190,9 @@ SessionService class >> processStepContext: context [
 { #category : #public }
 SessionService class >> registerBreakpoint: nodeContext [
 
-	| contextProperty contextLocal contextLocalParent |
+	| contextProperty contextLocal contextLocalParent lineCounter sourceCodeStream breakpointData alreadyExist |
+
+	CurrentSession ifNil: [ ^self ].
 
 	nodeContext isNil ifTrue: [ ^self ].
 
@@ -210,14 +212,61 @@ SessionService class >> registerBreakpoint: nodeContext [
 			^self.
 		]].
 
-	contextLocalParent isNil ifFalse: [ 
-			contextProperty sourceCode: contextLocalParent source asString.
-			contextProperty methodName: contextLocalParent selector asString.
-			contextProperty className: contextLocalParent compilationContext getClass asString.
+	(contextLocalParent isNil | contextLocal isNil) ifTrue: [ 
+			^self.
 		 ].
+
+	contextProperty sourceCode: contextLocalParent source asString.
+	contextProperty methodName: contextLocalParent selector asString.
+	contextProperty className: contextLocalParent compilationContext getClass asString.
+
+	contextProperty lineOfCode: (contextLocal source copyFrom: contextLocal start to: contextLocal stop) asString.
+
+	sourceCodeStream := (String new: 1000) writeStream.
+	contextProperty methodName = 'DoIt' 
+		ifTrue: [ sourceCodeStream := contextProperty sourceCode. ]
+		ifFalse: [ 
+			(Smalltalk at: (contextProperty className) asSymbol) fileOutOn: sourceCodeStream. 
+			"UndefinedObject on transcript is because fileOutOn: - review later."
+		].
+
+	contextProperty sourceCode: sourceCodeStream contents.
+
+	lineCounter := 0.
+	contextProperty sourceCode lines do: [ 
+		:line |
+			lineCounter := lineCounter + 1. 
+			(line indexOfSubCollection: contextProperty lineOfCode) > 0 ifTrue: [ 
+				contextProperty lineNumber: lineCounter.
+			] 
+		].
+		
+	contextProperty packageName: (self getNamespace: contextProperty className).
+	contextProperty filePath: (self processCodeFile: contextProperty).
+	contextProperty stepName: 'BreakpointAdd'.
+	contextProperty charStart: 0.
+	contextProperty charEnd: 0.
+
+	self processEvent: contextProperty.
+			
+	"Breakpoint"
+	breakpointData := BreakpointData new 
+		id: UUID new printString;
+		path: contextProperty filePath;
+		content: (ZnBase64Encoder new encode: (contextProperty sourceCode) asByteArray);
+		created: DateAndTime now.
+		"Adicionar demais properties e revisar a de cima"
 	
-	contextLocal isNil ifFalse: [ 			
-			contextProperty lineOfCode: (contextLocal source copyFrom: contextLocal start to: contextLocal stop) asString.
+	alreadyExist := false.
+	CurrentSession breakpoints do: [ "revisar na session a criação da lista, revisar no sabe do repository também"
+		:breakpoint | breakpointData codeFilePath = contextProperty filePath ifTrue: [ 
+			alreadyExist := true 
+			] 
+		].
+	
+	alreadyExist ifFalse: [ 
+			CurrentSession breakpoints add: breakpointData. 
+			Repository save: CurrentSession.
 		 ].
 
 ]

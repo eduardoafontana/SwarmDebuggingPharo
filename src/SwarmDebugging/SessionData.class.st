@@ -22,6 +22,11 @@ Class {
 }
 
 { #category : #accessing }
+SessionData >> breakpoints [
+	^Breakpoints
+]
+
+{ #category : #accessing }
 SessionData >> breakpoints: value [
 	Breakpoints := value
 ]
