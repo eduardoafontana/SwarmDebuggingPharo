@@ -16,6 +16,7 @@ jsonData := String streamContents: [ :stream |
 		mapInstVarsFor: Event;
 		mapInstVarsFor: CodeFile;
 		mapInstVarsFor: PathNode; 
+		mapInstVarsFor: BreakpointData;
       nextPut: (dataObject) ].
 
 ZnClient new

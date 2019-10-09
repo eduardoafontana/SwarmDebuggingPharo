@@ -246,26 +246,31 @@ SessionService class >> registerBreakpoint: nodeContext [
 	contextProperty stepName: 'BreakpointAdd'.
 	contextProperty charStart: 0.
 	contextProperty charEnd: 0.
-
-	self processEvent: contextProperty.
-			
+		
 	"Breakpoint"
 	breakpointData := BreakpointData new 
 		id: UUID new printString;
-		path: contextProperty filePath;
-		content: (ZnBase64Encoder new encode: (contextProperty sourceCode) asByteArray);
+		breakpointKind: contextProperty stepName;
+		namespace: contextProperty packageName;
+		type: contextProperty className;
+		codeFilePath: contextProperty filePath;
+		lineNumber: contextProperty lineNumber;
+		lineOfCode: contextProperty lineOfCode;
+		origin: 'AddedDuringDebug';
 		created: DateAndTime now.
-		"Adicionar demais properties e revisar a de cima"
 	
 	alreadyExist := false.
-	CurrentSession breakpoints do: [ "revisar na session a criação da lista, revisar no sabe do repository também"
-		:breakpoint | breakpointData codeFilePath = contextProperty filePath ifTrue: [ 
+	CurrentSession breakpoints do: [
+		:breakpointItem | breakpointItem codeFilePath = breakpointData codeFilePath ifTrue: [ 
 			alreadyExist := true 
 			] 
 		].
 	
 	alreadyExist ifFalse: [ 
+			self processEvent: contextProperty.
+			
 			CurrentSession breakpoints add: breakpointData. 
+			
 			Repository save: CurrentSession.
 		 ].
 

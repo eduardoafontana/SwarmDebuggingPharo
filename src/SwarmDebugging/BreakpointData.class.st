@@ -21,13 +21,29 @@ BreakpointData >> breakpointKind: value [
 ]
 
 { #category : #accessing }
+BreakpointData >> codeFilePath [
+	^CodeFilePath
+]
+
+{ #category : #accessing }
 BreakpointData >> codeFilePath: value [
 	CodeFilePath := value
 ]
 
 { #category : #accessing }
 BreakpointData >> created: value [
-	Created := value
+
+	|d s|
+	d := value.
+	s := d month asString, '/',
+	d dayOfMonth asString, '/', 
+	d year asString, ' ', 
+	d hour24 asString, ':', 
+	d minute asString, ':', 
+	d second asString, '.',
+	d nanoSecond asString.
+
+	Created := s
 ]
 
 { #category : #accessing }
