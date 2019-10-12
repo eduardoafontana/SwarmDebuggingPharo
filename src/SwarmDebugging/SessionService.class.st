@@ -188,6 +188,106 @@ SessionService class >> processStepContext: context [
 ]
 
 { #category : #public }
+SessionService class >> registerAlreadyAddedBreakpoints [
+
+	| contextProperty contextLocal contextLocalParent lineCounter sourceCodeStream breakpointData alreadyExist |
+
+	CurrentSession ifNil: [ ^self ].
+
+	
+	Breakpoint all do: [
+		:breakpointItem | 
+		
+		breakpointItem logCr.
+		breakpointItem node class logCr.
+		breakpointItem node source logCr.
+		breakpointItem node parent parent selector logCr.
+		breakpointItem node parent parent compilationContext getClass logCr.
+		
+		Transcript cr.
+		].	
+
+"	nodeContext isNil ifTrue: [ ^self ].
+
+	contextProperty := ContextProperty getInstance.
+	contextLocal := nil.
+	contextLocalParent := nil.
+
+	nodeContext class asString = 'RBInstanceVariableNode' ifTrue: [ 
+			contextLocal := nodeContext parent value.
+			contextLocalParent := nodeContext parent parent parent.
+		 ]
+	ifFalse: [ nodeContext class asString = 'RBAssignmentNode' ifTrue: [
+			contextLocal := nodeContext value.
+			contextLocalParent := nodeContext parent parent.
+		]
+	ifFalse: [
+			^self.
+		]].
+
+	(contextLocalParent isNil | contextLocal isNil) ifTrue: [ 
+			^self.
+		 ].
+
+	contextProperty sourceCode: contextLocalParent source asString.
+	contextProperty methodName: contextLocalParent selector asString.
+	contextProperty className: contextLocalParent compilationContext getClass asString.
+
+	contextProperty lineOfCode: (contextLocal source copyFrom: contextLocal start to: contextLocal stop) asString.
+
+	sourceCodeStream := (String new: 1000) writeStream.
+	contextProperty methodName = 'DoIt' 
+		ifTrue: [ sourceCodeStream := contextProperty sourceCode. ]
+		ifFalse: [ 
+			(Smalltalk at: (contextProperty className) asSymbol) fileOutOn: sourceCodeStream. 
+		].
+
+	contextProperty sourceCode: sourceCodeStream contents.
+
+	lineCounter := 0.
+	contextProperty sourceCode lines do: [ 
+		:line |
+			lineCounter := lineCounter + 1. 
+			(line indexOfSubCollection: contextProperty lineOfCode) > 0 ifTrue: [ 
+				contextProperty lineNumber: lineCounter.
+			] 
+		].
+		
+	contextProperty packageName: (self getNamespace: contextProperty className).
+	contextProperty filePath: (self processCodeFile: contextProperty).
+	contextProperty stepName: 'BreakpointAdd'.
+	contextProperty charStart: 0.
+	contextProperty charEnd: 0.
+		
+	breakpointData := BreakpointData new 
+		id: UUID new printString;
+		breakpointKind: contextProperty stepName;
+		namespace: contextProperty packageName;
+		type: contextProperty className;
+		codeFilePath: contextProperty filePath;
+		lineNumber: contextProperty lineNumber;
+		lineOfCode: contextProperty lineOfCode;
+		origin: 'AddedDuringDebug';
+		created: DateAndTime now.
+	
+	alreadyExist := false.
+	CurrentSession breakpoints do: [
+		:breakpointItem | breakpointItem codeFilePath = breakpointData codeFilePath ifTrue: [ 
+			alreadyExist := true 
+			] 
+		].
+	
+	alreadyExist ifFalse: [ 
+			self processEvent: contextProperty.
+			
+			CurrentSession breakpoints add: breakpointData. 
+			
+			Repository save: CurrentSession.
+		 ]."
+
+]
+
+{ #category : #public }
 SessionService class >> registerBreakpoint: nodeContext [
 
 	| contextProperty contextLocal contextLocalParent lineCounter sourceCodeStream breakpointData alreadyExist |
@@ -301,6 +401,8 @@ SessionService class >> registerNewSession: context [
 	Repository save: CurrentSession.
 	
 	self registerStepInto: context.
+	
+	self registerAlreadyAddedBreakpoints.
 ]
 
 { #category : #public }
