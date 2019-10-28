@@ -43,7 +43,7 @@ SessionService class >> processCodeFile: contextProperty [
 
 	CurrentSession ifNil: [ ^self ].
 
-	codeFilePath := (FileLocator imageDirectory / contextProperty className, 'st') pathString.	
+	codeFilePath := (FileLocator imageDirectory / contextProperty packageName / contextProperty className, 'st') pathString.	
 
 	"CodeFile"
 	codeFile := CodeFile new 
