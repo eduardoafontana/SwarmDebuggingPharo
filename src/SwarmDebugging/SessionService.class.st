@@ -146,7 +146,7 @@ SessionService class >> processStep: context stepName: stepName [
 { #category : #public }
 SessionService class >> processStepContext: context [
 
-	| typeWord sourceCodeStream lineOfCode lineCounter lineNumber |
+	| typeWord sourceCodeStream lineOfCode lineCounter lineNumber lineStart lineStop |
 	
 	typeWord := context methodClass asString.
 	((typeWord indexOfSubCollection: ' class') asNumber > 1) ifTrue: [
@@ -162,7 +162,9 @@ SessionService class >> processStepContext: context [
 		].
 
 	lineOfCode := (context method sourceNodeForPC: context pc).
-	lineOfCode := ( lineOfCode source copyFrom: lineOfCode start to: lineOfCode stop ) asString.
+	lineStart := lineOfCode start.
+	lineStop := lineOfCode stop.	
+	lineOfCode := ( lineOfCode source copyFrom: lineStart to: lineStop ) asString.
 	
 	lineNumber := 0.
 	lineCounter := 0.
@@ -181,8 +183,8 @@ SessionService class >> processStepContext: context [
 		sourceCode: sourceCodeStream contents;
 		lineOfCode: lineOfCode;
 		lineNumber: lineNumber;
-		charStart: 0;
-		charEnd: 0.
+		charStart: lineStart;
+		charEnd: lineStop.
 		
 	
 ]
