@@ -344,19 +344,31 @@ SessionService class >> registerNewSession: context [
 
 	Repository save: CurrentSession.
 	
-	self registerStepInto: context.
-	
 	self registerAlreadyAddedBreakpoints.
+]
+
+{ #category : #public }
+SessionService class >> registerNewSessionFromDebugWindow: context [
+
+	CurrentSession ifNotNil: [ ^self ].
+
+	self registerNewSession: context.
+	
+	self processStep: context stepName: 'StepInto'.
 ]
 
 { #category : #public }
 SessionService class >> registerStepInto: context [
 
+	self registerNewSession: context.
+	
 	self processStep: context stepName: 'StepInto'.
 ]
 
 { #category : #public }
 SessionService class >> registerStepOver: context [
+
+	self registerNewSession: context.
 
 	self processStep: context stepName: 'StepOver'.
 	
