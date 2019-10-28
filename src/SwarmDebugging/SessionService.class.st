@@ -198,9 +198,11 @@ SessionService class >> registerAlreadyAddedBreakpoints [
 		| contextProperty breakpointData sourceCodeStream lineOfCode lineCounter lineNumber |
 		
 		sourceCodeStream := (String new: 1000) writeStream.
-		(Smalltalk at: breakpointItem node methodNode methodClass asSymbol) fileOutOn: sourceCodeStream.
-
+		(Smalltalk at: breakpointItem node methodNode methodClass asString asSymbol) fileOutOn: sourceCodeStream.
+	
 		lineOfCode := breakpointItem node methodNode source copyFrom: breakpointItem node start to: breakpointItem node stop.
+		breakpointItem node class asString = 'RBMethodNode' 
+			ifTrue: [ lineOfCode := breakpointItem node methodNode selector asString ].
 		
 		lineCounter := 0.
 		sourceCodeStream contents lines do: [ 
