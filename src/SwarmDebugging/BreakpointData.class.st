@@ -57,6 +57,11 @@ BreakpointData >> id: value [
 ]
 
 { #category : #accessing }
+BreakpointData >> lineNumber [
+	^LineNumber
+]
+
+{ #category : #accessing }
 BreakpointData >> lineNumber: value [
 	LineNumber := value
 ]

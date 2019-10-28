@@ -249,63 +249,43 @@ SessionService class >> registerAlreadyAddedBreakpoints [
 { #category : #public }
 SessionService class >> registerBreakpoint: nodeContext [
 
-	| contextProperty contextLocal contextLocalParent lineCounter sourceCodeStream breakpointData alreadyExist |
+	| contextProperty lineCounter lineOfCode lineNumber sourceCodeStream breakpointData alreadyExist |
 
 	CurrentSession ifNil: [ ^self ].
 
 	nodeContext isNil ifTrue: [ ^self ].
 
-	contextProperty := ContextProperty getInstance.
-	contextLocal := nil.
-	contextLocalParent := nil.
-
-	nodeContext class asString = 'RBInstanceVariableNode' ifTrue: [ 
-			contextLocal := nodeContext parent value.
-			contextLocalParent := nodeContext parent parent parent.
-		 ]
-	ifFalse: [ nodeContext class asString = 'RBAssignmentNode' ifTrue: [
-			contextLocal := nodeContext value.
-			contextLocalParent := nodeContext parent parent.
-		]
-	ifFalse: [
-			^self.
-		]].
-
-	(contextLocalParent isNil | contextLocal isNil) ifTrue: [ 
-			^self.
-		 ].
-
-	contextProperty sourceCode: contextLocalParent source asString.
-	contextProperty methodName: contextLocalParent selector asString.
-	contextProperty className: contextLocalParent compilationContext getClass asString.
-
-	contextProperty lineOfCode: (contextLocal source copyFrom: contextLocal start to: contextLocal stop) asString.
-
+	Transcript show: 'entrou no metodo'; cr.
+		
 	sourceCodeStream := (String new: 1000) writeStream.
-	contextProperty methodName = 'DoIt' 
-		ifTrue: [ sourceCodeStream := contextProperty sourceCode. ]
-		ifFalse: [ 
-			(Smalltalk at: (contextProperty className) asSymbol) fileOutOn: sourceCodeStream. 
-			"UndefinedObject on transcript is because fileOutOn: - review later."
-		].
-
-	contextProperty sourceCode: sourceCodeStream contents.
-
+	(Smalltalk at: nodeContext methodNode methodClass asString asSymbol) fileOutOn: sourceCodeStream.
+	
+	lineOfCode := nodeContext methodNode source copyFrom: nodeContext start to: nodeContext stop.
+	nodeContext class asString = 'RBMethodNode' 
+	ifTrue: [ lineOfCode := nodeContext methodNode selector asString ].
+		
 	lineCounter := 0.
-	contextProperty sourceCode lines do: [ 
+	sourceCodeStream contents lines do: [ 
 		:line |
 			lineCounter := lineCounter + 1. 
-			(line indexOfSubCollection: contextProperty lineOfCode) > 0 ifTrue: [ 
-				contextProperty lineNumber: lineCounter.
+			(line indexOfSubCollection: lineOfCode) > 0 ifTrue: [ 
+				lineNumber := lineCounter.
 			] 
 		].
 		
-	contextProperty packageName: (self getNamespace: contextProperty className).
-	contextProperty filePath: (self processCodeFile: contextProperty).
-	contextProperty stepName: 'BreakpointAdd'.
-	contextProperty charStart: 0.
-	contextProperty charEnd: 0.
+	contextProperty := ContextProperty getInstance
+		stepName: 'BreakpointAdd';
+		methodName: nodeContext methodNode selector asString;
+		className: nodeContext methodNode methodClass asString;
+		packageName: (self getNamespace: nodeContext methodNode methodClass asString);
+		sourceCode: sourceCodeStream contents; 
+		lineOfCode: lineOfCode;
+		lineNumber: lineNumber;
+		charStart: nodeContext start;
+		charEnd: nodeContext stop.
 		
+	contextProperty filePath: (self processCodeFile: contextProperty).
+
 	"Breakpoint"
 	breakpointData := BreakpointData new 
 		id: UUID new printString;
@@ -320,14 +300,17 @@ SessionService class >> registerBreakpoint: nodeContext [
 	
 	alreadyExist := false.
 	CurrentSession breakpoints do: [
-		:breakpointItem | breakpointItem codeFilePath = breakpointData codeFilePath ifTrue: [ 
-			alreadyExist := true 
+		:breakpointItem | 
+			(breakpointItem codeFilePath = breakpointData codeFilePath) &
+			(breakpointItem lineNumber = breakpointData lineNumber)
+			ifTrue: [ 
+				alreadyExist := true 
 			] 
 		].
 	
 	alreadyExist ifFalse: [ 
 			self processEvent: contextProperty.
-			
+			Transcript show: 'adicionou no array'; cr.
 			CurrentSession breakpoints add: breakpointData. 
 			
 			Repository save: CurrentSession.
@@ -346,7 +329,7 @@ SessionService class >> registerNewSession: context [
 			description: 'Pharo4';			
 			started: DateAndTime now;
 			developerName: 'Eduardo A. Fontana';
-			taskName: 'Test from Pharo 2';
+			taskName: 'Test from Pharo 3';
 			taskAction: 'SearchingBug';
 			taskDescription: nil;
 			taskCreated: nil;
