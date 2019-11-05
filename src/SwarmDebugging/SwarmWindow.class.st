@@ -92,14 +92,26 @@ SwarmWindow >> initializePresenter [
 		 ifTrue: [ buttonSave enable ] ifFalse: [ buttonSave disable ]
 	].
 
-	"buttonGreet action: [ 
-		labelGreeting label: 'Hello, ', textName text, '!'.
-		buttonGreet disable. 
-	]."
+	buttonSave action: [ 
+		| windowProperty |
+
+		windowProperty := WindowProperty new 
+			projectName: textProject text; 
+			developerName: textDeveloper text;
+			taskName: textTaskTitle text;
+			taskAction: dropTaskAction selectedItem;
+			taskDescription: textTaskDescription text.
+		
+		SessionService setSwarmWindowData: windowProperty.
+		
+		self window close.
+	].
 ]
 
 { #category : #accessing }
 SwarmWindow >> initializeWidgets [
+	| defaultData |
+	
 	self title: 'Pharo Swarm Debugging Monitor Client'.
 	self instantiateModels: #(
 		labelInstruction LabelPresenter
@@ -136,6 +148,19 @@ SwarmWindow >> initializeWidgets [
 	dropTaskAction 	addItemLabeled: 'NewFeature' do: [ ].
 	dropTaskAction 	addItemLabeled: 'Refactoring' do: [ ].
 	dropTaskAction 	addItemLabeled: 'Designing' do: [ ].
+
+	defaultData := SessionService getSwarmWindowData.
+	defaultData ifNotNil: [ 
+		textProject text: defaultData projectName.
+		textDeveloper text: defaultData developerName.
+		textTaskTitle text: defaultData taskName.
+		dropTaskAction setSelectedItem: defaultData taskAction.
+		textTaskDescription text: defaultData taskDescription.
+		
+		(textProject text isNotEmpty &
+		textDeveloper text isNotEmpty &
+		textTaskTitle text isNotEmpty) ifTrue: [ buttonSave enable ]
+	]
 
 ]
 

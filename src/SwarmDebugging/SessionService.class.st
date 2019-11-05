@@ -2,7 +2,8 @@ Class {
 	#name : #SessionService,
 	#superclass : #Object,
 	#classInstVars : [
-		'CurrentSession'
+		'CurrentSession',
+		'SwarmWindowData'
 	],
 	#category : #'SwarmDebugging-Service'
 }
@@ -34,6 +35,11 @@ SessionService class >> getNamespace: typeWord [
 		do: [ namespaceWord := 'NamespaceNotFound' ].
 	
 	^namespaceWord 
+]
+
+{ #category : #public }
+SessionService class >> getSwarmWindowData [
+	^SwarmWindowData
 ]
 
 { #category : #processAndSend }
@@ -325,18 +331,27 @@ SessionService class >> registerNewSession: context [
 
 	CurrentSession ifNotNil: [ ^self ].
 
+	SwarmWindowData ifNil:[ SwarmWindowData := 
+		WindowProperty new 
+			projectName: 'Pharo Project Sample'; 
+			developerName:'I am a Developer';
+			taskName: 'This is my current task';
+			taskAction: 'SearchingBug';
+			taskDescription: ''
+		].
+
 	CurrentSession := 
 		SessionData new 
 			id: UUID new printString; 
 			description: 'Pharo4';			
 			started: DateAndTime now;
-			developerName: 'Eduardo A. Fontana';
-			taskName: 'Test from Pharo 3';
-			taskAction: 'SearchingBug';
-			taskDescription: nil;
-			taskCreated: nil;
+			developerName: SwarmWindowData developerName;
+			taskName: SwarmWindowData taskName;
+			taskAction: SwarmWindowData taskAction;
+			taskDescription: SwarmWindowData taskDescription;
+			taskCreated: nil; "revisar depois"
 			taskTotalSessionTime: '00:00:00.0000000';
-			projectName: 'Swarm on Pharo';
+			projectName: SwarmWindowData projectName;
 			breakpoints: OrderedCollection new;
 			codeFiles: OrderedCollection new;
 			events: OrderedCollection new;
@@ -379,4 +394,9 @@ SessionService class >> registerStepOver: context [
 SessionService class >> reset [
 	<script: 'self reset'>
 	CurrentSession := nil
+]
+
+{ #category : #public }
+SessionService class >> setSwarmWindowData: windowProPerty [
+	SwarmWindowData := windowProPerty
 ]
