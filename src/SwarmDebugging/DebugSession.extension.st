@@ -54,12 +54,11 @@ DebugSession >> stepThrough: aContext [
 DebugSession >> terminate [
 	"Action that needs to be executed after the window containing this debug session is closed, 
 	in order to terminate the right process."
+
+	SessionService endCurrentSession.
 	
 	self interruptedProcess 
-		ifNotNil: [ 
-			
-			SessionService endCurrentSession.
-			
+		ifNotNil: [ 			
 			"Assume the user closed the debugger. Simply kill the interrupted process."
 			self interruptedProcess terminate.
 			self clear.
