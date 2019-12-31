@@ -343,7 +343,7 @@ SessionService class >> registerNewSession: context [
 	CurrentSession := 
 		SessionData new 
 			id: UUID new printString; 
-			description: 'Pharo4';			
+			description: 'Swarm on Pharo';			
 			started: DateAndTime now;
 			developerName: SwarmWindowData developerName;
 			taskName: SwarmWindowData taskName;
