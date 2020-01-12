@@ -3,6 +3,8 @@ Class {
 	#superclass : #ComposablePresenter,
 	#instVars : [
 		'labelInstruction',
+		'labelInstruction1',
+		'labelInstruction2',
 		'labelProject',
 		'labelDeveloper',
 		'labelTaskTitle',
@@ -24,8 +26,9 @@ SwarmWindow class >> defaultSpec [
   ^ SpecLayout composed
       
 		newColumn: [ :mainColumn | 
-			mainColumn newRow: [ :row | row add: #labelInstruction ].
-						
+			mainColumn newRow: [ :row | row add: #labelInstruction1 ].
+			mainColumn newRow: [ :row | row add: #labelInstruction2 ].	
+
 			mainColumn newRow: [ :row | row add: #labelProject; add: #labelDeveloper ].
 			mainColumn newRow: [ :row | row add: #textProject; add: #textDeveloper ].
 			mainColumn newRow: [ :row | row add: #labelTaskTitle; add: #labelTaskAction ].
@@ -114,7 +117,8 @@ SwarmWindow >> initializeWidgets [
 	
 	self title: 'Pharo Swarm Debugging Monitor Client'.
 	self instantiateModels: #(
-		labelInstruction LabelPresenter
+		labelInstruction1 LabelPresenter
+		labelInstruction2 LabelPresenter
 		labelProject LabelPresenter
 		labelDeveloper LabelPresenter
 		labelTaskTitle LabelPresenter
@@ -129,7 +133,8 @@ SwarmWindow >> initializeWidgets [
 		buttonSave ButtonPresenter
   ).
 
-	labelInstruction label: ''.
+	labelInstruction1 label: 'Complementary data of debugging session.'.
+	labelInstruction2 label: 'Are used on visualization tool to group/categorize debugging sessions.'.
 	labelProject label: 'Project*'.
 	labelDeveloper label: 'Developer Nickname*'.
 	labelTaskTitle label: 'Task Title*'.
@@ -187,6 +192,26 @@ SwarmWindow >> labelFoot: anObject [
 { #category : #accessing }
 SwarmWindow >> labelInstruction [
 	^ labelInstruction
+]
+
+{ #category : #accessing }
+SwarmWindow >> labelInstruction1 [
+	^ labelInstruction1
+]
+
+{ #category : #accessing }
+SwarmWindow >> labelInstruction1: anObject [
+	labelInstruction1 := anObject
+]
+
+{ #category : #accessing }
+SwarmWindow >> labelInstruction2 [
+	^ labelInstruction2
+]
+
+{ #category : #accessing }
+SwarmWindow >> labelInstruction2: anObject [
+	labelInstruction2 := anObject
 ]
 
 { #category : #accessing }
