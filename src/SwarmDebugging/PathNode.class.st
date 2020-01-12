@@ -2,18 +2,18 @@ Class {
 	#name : #PathNode,
 	#superclass : #Object,
 	#instVars : [
-		'Id',
-		'Hash',
-		'Namespace',
-		'Type',
-		'Method',
-		'Parent',
-		'Parent_Id',
-		'Origin',
-		'ReturnType',
-		'Parameters',
-		'Created',
-		'Event_Id'
+		'id',
+		'hash',
+		'namespace',
+		'type',
+		'method',
+		'parent',
+		'parent_Id',
+		'origin',
+		'returnType',
+		'parameters',
+		'created',
+		'event_Id'
 	],
 	#category : #'SwarmDebugging-Service-DataModel'
 }
@@ -31,65 +31,65 @@ PathNode >> created: value [
 	d second asString, '.',
 	d nanoSecond asString.
 
-	Created := s
+	created := s
 ]
 
 { #category : #accessing }
 PathNode >> event_Id: value [
-	Event_Id := value
+	event_Id := value
 ]
 
 { #category : #accessing }
 PathNode >> hash: value [
-	Hash := value
+	hash := value
 ]
 
 { #category : #accessing }
 PathNode >> id [
-	^Id
+	^id
 ]
 
 { #category : #accessing }
 PathNode >> id: value [
-	Id := value
+	id := value
 ]
 
 { #category : #accessing }
 PathNode >> method: value [
-	Method := value
+	method := value
 ]
 
 { #category : #accessing }
 PathNode >> namespace: value [
-	Namespace := value
+	namespace := value
 ]
 
 { #category : #accessing }
 PathNode >> origin: value [
-	Origin := value
+	origin := value
 ]
 
 { #category : #accessing }
 PathNode >> parameters: value [
-	Parameters := value
+	parameters := value
 ]
 
 { #category : #accessing }
 PathNode >> parent: value [
-	Parent := value
+	parent := value
 ]
 
 { #category : #accessing }
 PathNode >> parent_Id: value [
-	Parent_Id := value
+	parent_Id := value
 ]
 
 { #category : #accessing }
 PathNode >> returnType: value [
-	ReturnType := value
+	returnType := value
 ]
 
 { #category : #accessing }
 PathNode >> type: value [
-	Type := value
+	type := value
 ]

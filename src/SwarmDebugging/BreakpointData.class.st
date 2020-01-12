@@ -2,32 +2,32 @@ Class {
 	#name : #BreakpointData,
 	#superclass : #Object,
 	#instVars : [
-		'Id',
-		'BreakpointKind',
-		'Namespace',
-		'Type',
-		'CodeFilePath',
-		'LineNumber',
-		'LineOfCode',
-		'Origin',
-		'Created'
+		'id',
+		'breakpointKind',
+		'namespace',
+		'type',
+		'codeFilePath',
+		'lineNumber',
+		'lineOfCode',
+		'origin',
+		'created'
 	],
 	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }
 BreakpointData >> breakpointKind: value [
-	BreakpointKind := value
+	breakpointKind := value
 ]
 
 { #category : #accessing }
 BreakpointData >> codeFilePath [
-	^CodeFilePath
+	^codeFilePath
 ]
 
 { #category : #accessing }
 BreakpointData >> codeFilePath: value [
-	CodeFilePath := value
+	codeFilePath := value
 ]
 
 { #category : #accessing }
@@ -43,45 +43,45 @@ BreakpointData >> created: value [
 	d second asString, '.',
 	d nanoSecond asString.
 
-	Created := s
+	created := s
 ]
 
 { #category : #accessing }
 BreakpointData >> id [
-	^Id
+	^id
 ]
 
 { #category : #accessing }
 BreakpointData >> id: value [
-	Id := value
+	id := value
 ]
 
 { #category : #accessing }
 BreakpointData >> lineNumber [
-	^LineNumber
+	^lineNumber
 ]
 
 { #category : #accessing }
 BreakpointData >> lineNumber: value [
-	LineNumber := value
+	lineNumber := value
 ]
 
 { #category : #accessing }
 BreakpointData >> lineOfCode: value [
-	LineOfCode := value
+	lineOfCode := value
 ]
 
 { #category : #accessing }
 BreakpointData >> namespace: value [
-	Namespace := value
+	namespace := value
 ]
 
 { #category : #accessing }
 BreakpointData >> origin: value [
-	Origin := value
+	origin := value
 ]
 
 { #category : #accessing }
 BreakpointData >> type: value [
-	Type := value
+	type := value
 ]

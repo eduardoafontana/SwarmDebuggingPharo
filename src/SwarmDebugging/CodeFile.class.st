@@ -2,17 +2,17 @@ Class {
 	#name : #CodeFile,
 	#superclass : #Object,
 	#instVars : [
-		'Id',
-		'Path',
-		'Content',
-		'Created'
+		'id',
+		'path',
+		'content',
+		'created'
 	],
 	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }
 CodeFile >> content: value [
-	Content := value
+	content := value
 ]
 
 { #category : #accessing }
@@ -28,20 +28,20 @@ CodeFile >> created: value [
 	d second asString, '.',
 	d nanoSecond asString.
 
-	Created := s
+	created := s
 ]
 
 { #category : #accessing }
 CodeFile >> id: value [
-	Id := value
+	id := value
 ]
 
 { #category : #accessing }
 CodeFile >> path [
-	^Path
+	^path
 ]
 
 { #category : #accessing }
 CodeFile >> path: value [
-	Path := value
+	path := value
 ]

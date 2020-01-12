@@ -2,63 +2,63 @@ Class {
 	#name : #SessionData,
 	#superclass : #Object,
 	#instVars : [
-		'Id',
-		'Description',
-		'Started',
-		'Finished',
-		'DeveloperName',
-		'TaskName',
-		'TaskAction',
-		'TaskDescription',
-		'TaskCreated',
-		'TaskTotalSessionTime',
-		'ProjectName',
-		'Breakpoints',
-		'CodeFiles',
-		'Events',
-		'PathNodes'
+		'id',
+		'description',
+		'started',
+		'finished',
+		'developerName',
+		'taskName',
+		'taskAction',
+		'taskDescription',
+		'taskCreated',
+		'taskTotalSessionTime',
+		'projectName',
+		'breakpoints',
+		'codeFiles',
+		'events',
+		'pathNodes'
 	],
 	#category : #'SwarmDebugging-Service-DataModel'
 }
 
 { #category : #accessing }
 SessionData >> breakpoints [
-	^Breakpoints
+	^breakpoints
 ]
 
 { #category : #accessing }
 SessionData >> breakpoints: value [
-	Breakpoints := value
+	breakpoints := value
 ]
 
 { #category : #accessing }
 SessionData >> codeFiles [
-	^CodeFiles
+	^codeFiles
 ]
 
 { #category : #accessing }
 SessionData >> codeFiles: value [
-	CodeFiles := value
+	codeFiles := value
 ]
 
 { #category : #accessing }
 SessionData >> description: value [
-	Description := value
+	description := value
 ]
 
 { #category : #accessing }
 SessionData >> developerName: value [
-	DeveloperName := value
+	developerName := value
 ]
 
 { #category : #accessing }
 SessionData >> events [
-	^Events
+	^events
 ]
 
 { #category : #accessing }
 SessionData >> events: value [
-	Events := value
+	events := value
 ]
 
 { #category : #accessing }
@@ -74,27 +74,27 @@ SessionData >> finished: value [
 	d second asString, '.',
 	d nanoSecond asString.
 
-	Finished := s.
+	finished := s.
 ]
 
 { #category : #accessing }
 SessionData >> id: value [
-	Id := value
+	id := value
 ]
 
 { #category : #accessing }
 SessionData >> pathNodes [
-	^PathNodes
+	^pathNodes
 ]
 
 { #category : #accessing }
 SessionData >> pathNodes: value [
-	PathNodes := value
+	pathNodes := value
 ]
 
 { #category : #accessing }
 SessionData >> projectName: value [
-	ProjectName := value
+	projectName := value
 ]
 
 { #category : #accessing }
@@ -110,30 +110,30 @@ SessionData >> started: value [
 	d second asString, '.',
 	d nanoSecond asString.
 
-	Started := s.
+	started := s.
 ]
 
 { #category : #accessing }
 SessionData >> taskAction: value [
-	TaskAction := value
+	taskAction := value
 ]
 
 { #category : #accessing }
 SessionData >> taskCreated: value [
-	TaskCreated := value
+	taskCreated := value
 ]
 
 { #category : #accessing }
 SessionData >> taskDescription: value [
-	TaskDescription := value
+	taskDescription := value
 ]
 
 { #category : #accessing }
 SessionData >> taskName: value [
-	TaskName := value
+	taskName := value
 ]
 
 { #category : #accessing }
 SessionData >> taskTotalSessionTime: value [
-	TaskTotalSessionTime := value
+	taskTotalSessionTime := value
 ]

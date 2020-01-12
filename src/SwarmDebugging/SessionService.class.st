@@ -2,8 +2,8 @@ Class {
 	#name : #SessionService,
 	#superclass : #Object,
 	#classInstVars : [
-		'CurrentSession',
-		'SwarmWindowData'
+		'currentSession',
+		'swarmWindowData'
 	],
 	#category : #'SwarmDebugging-Service'
 }
@@ -11,11 +11,11 @@ Class {
 { #category : #public }
 SessionService class >> endCurrentSession [ 
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 
-	CurrentSession finished: DateAndTime now.
+	currentSession finished: DateAndTime now.
 
-	Repository save: CurrentSession.
+	Repository save: currentSession.
 	
 	self reset.
 	
@@ -39,7 +39,7 @@ SessionService class >> getNamespace: typeWord [
 
 { #category : #public }
 SessionService class >> getSwarmWindowData [
-	^SwarmWindowData
+	^swarmWindowData
 ]
 
 { #category : #processAndSend }
@@ -47,7 +47,7 @@ SessionService class >> processCodeFile: contextProperty [
 
 	| codeFile codeFilePath alreadyExist |
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 
 	codeFilePath := (FileLocator imageDirectory / contextProperty packageName / contextProperty className, 'st') pathString.	
 
@@ -59,15 +59,15 @@ SessionService class >> processCodeFile: contextProperty [
 		created: DateAndTime now.
 	
 	alreadyExist := false.
-	CurrentSession codeFiles do: [ 
+	currentSession codeFiles do: [ 
 		:file | file path = codeFilePath ifTrue: [ 
 			alreadyExist := true 
 			] 
 		].
 	
 	alreadyExist ifFalse: [ 
-			CurrentSession codeFiles add: codeFile. 
-			Repository save: CurrentSession.		
+			currentSession codeFiles add: codeFile. 
+			Repository save: currentSession.		
 		 ].
 	
 	^codeFilePath
@@ -80,7 +80,7 @@ SessionService class >> processEvent: contextProperty [
 
 	| event event_id |
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 
 	event_id := UUID new printString.
 
@@ -101,9 +101,9 @@ SessionService class >> processEvent: contextProperty [
 		lineNumber: contextProperty lineNumber;
 		lineOfCode: contextProperty lineOfCode;
 		created: DateAndTime now.
-	CurrentSession events add: event.
+	currentSession events add: event.
 	
-	Repository save: CurrentSession.
+	Repository save: currentSession.
 	
 	^event_id.
 	
@@ -115,7 +115,7 @@ SessionService class >> processStep: context stepName: stepName [
 
 	| event_id pathNode contextProperty |
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 
 	contextProperty	:= self processStepContext: context.
 
@@ -133,18 +133,18 @@ SessionService class >> processStep: context stepName: stepName [
 		type: contextProperty className;
 		method: contextProperty methodName;
 		parent: nil;
-		parent_Id: (CurrentSession pathNodes isEmpty 
+		parent_Id: (currentSession pathNodes isEmpty 
 			ifTrue: [ '00000000-0000-0000-0000-000000000000' ] 
-			ifFalse: [ CurrentSession pathNodes last id ]);
+			ifFalse: [ currentSession pathNodes last id ]);
 		origin: stepName;
 		returnType: 'void';
 		parameters: OrderedCollection new;
 		event_Id: event_id;
 		created: DateAndTime now.
-	CurrentSession pathNodes add: pathNode.	
+	currentSession pathNodes add: pathNode.	
 	
 	
-	Repository save: CurrentSession.
+	Repository save: currentSession.
 	
 
 ]
@@ -198,7 +198,7 @@ SessionService class >> processStepContext: context [
 { #category : #public }
 SessionService class >> registerAlreadyAddedBreakpoints [
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 	
 	Breakpoint all do: [
 		:breakpointItem | 
@@ -247,9 +247,9 @@ SessionService class >> registerAlreadyAddedBreakpoints [
 			
 		self processEvent: contextProperty.
 			
-		CurrentSession breakpoints add: breakpointData. 
+		currentSession breakpoints add: breakpointData. 
 			
-		Repository save: CurrentSession.
+		Repository save: currentSession.
 	].
 
 ]
@@ -259,7 +259,7 @@ SessionService class >> registerBreakpoint: nodeContext [
 
 	| contextProperty lineCounter lineOfCode lineNumber sourceCodeStream breakpointData alreadyExist |
 
-	CurrentSession ifNil: [ ^self ].
+	currentSession ifNil: [ ^self ].
 
 	nodeContext isNil ifTrue: [ ^self ].
 
@@ -307,7 +307,7 @@ SessionService class >> registerBreakpoint: nodeContext [
 		created: DateAndTime now.
 	
 	alreadyExist := false.
-	CurrentSession breakpoints do: [
+	currentSession breakpoints do: [
 		:breakpointItem | 
 			(breakpointItem codeFilePath = breakpointData codeFilePath) &
 			(breakpointItem lineNumber = breakpointData lineNumber)
@@ -319,9 +319,9 @@ SessionService class >> registerBreakpoint: nodeContext [
 	alreadyExist ifFalse: [ 
 			self processEvent: contextProperty.
 			Transcript show: 'adicionou no array'; cr.
-			CurrentSession breakpoints add: breakpointData. 
+			currentSession breakpoints add: breakpointData. 
 			
-			Repository save: CurrentSession.
+			Repository save: currentSession.
 		 ].
 
 ]
@@ -329,9 +329,9 @@ SessionService class >> registerBreakpoint: nodeContext [
 { #category : #public }
 SessionService class >> registerNewSession: context [
 
-	CurrentSession ifNotNil: [ ^self ].
+	currentSession ifNotNil: [ ^self ].
 
-	SwarmWindowData ifNil:[ SwarmWindowData := 
+	swarmWindowData ifNil:[ swarmWindowData := 
 		WindowProperty new 
 			projectName: 'Pharo Project Sample'; 
 			developerName:'I am a Developer';
@@ -340,24 +340,24 @@ SessionService class >> registerNewSession: context [
 			taskDescription: ''
 		].
 
-	CurrentSession := 
+	currentSession := 
 		SessionData new 
 			id: UUID new printString; 
 			description: 'Swarm on Pharo';			
 			started: DateAndTime now;
-			developerName: SwarmWindowData developerName;
-			taskName: SwarmWindowData taskName;
-			taskAction: SwarmWindowData taskAction;
-			taskDescription: SwarmWindowData taskDescription;
+			developerName: swarmWindowData developerName;
+			taskName: swarmWindowData taskName;
+			taskAction: swarmWindowData taskAction;
+			taskDescription: swarmWindowData taskDescription;
 			taskCreated: nil; "revisar depois"
 			taskTotalSessionTime: '00:00:00.0000000';
-			projectName: SwarmWindowData projectName;
+			projectName: swarmWindowData projectName;
 			breakpoints: OrderedCollection new;
 			codeFiles: OrderedCollection new;
 			events: OrderedCollection new;
 			pathNodes: OrderedCollection new.
 
-	Repository save: CurrentSession.
+	Repository save: currentSession.
 	
 	self registerAlreadyAddedBreakpoints.
 ]
@@ -365,7 +365,7 @@ SessionService class >> registerNewSession: context [
 { #category : #public }
 SessionService class >> registerNewSessionFromDebugWindow: context [
 
-	CurrentSession ifNotNil: [ ^self ].
+	currentSession ifNotNil: [ ^self ].
 
 	self registerNewSession: context.
 	
@@ -393,10 +393,10 @@ SessionService class >> registerStepOver: context [
 { #category : #initialization }
 SessionService class >> reset [
 	<script: 'self reset'>
-	CurrentSession := nil
+	currentSession := nil
 ]
 
 { #category : #public }
 SessionService class >> setSwarmWindowData: windowProPerty [
-	SwarmWindowData := windowProPerty
+	swarmWindowData := windowProPerty
 ]

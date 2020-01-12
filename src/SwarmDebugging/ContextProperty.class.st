@@ -2,16 +2,16 @@ Class {
 	#name : #ContextProperty,
 	#superclass : #Object,
 	#instVars : [
-		'MethodName',
-		'ClassName',
-		'PackageName',
-		'SourceCode',
-		'LineOfCode',
-		'LineNumber',
-		'CharStart',
-		'CharEnd',
-		'StepName',
-		'FilePath'
+		'methodName',
+		'className',
+		'packageName',
+		'sourceCode',
+		'lineOfCode',
+		'lineNumber',
+		'charStart',
+		'charEnd',
+		'stepName',
+		'filePath'
 	],
 	#category : #'SwarmDebugging-DataModel'
 }
@@ -31,100 +31,100 @@ ContextProperty class >> getInstance [
 
 { #category : #'as yet unclassified' }
 ContextProperty >> charEnd [
-	^CharEnd
+	^charEnd
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> charEnd: value [
-	CharEnd := value
+	charEnd := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> charStart [
-	^CharStart
+	^charStart
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> charStart: value [
-	CharStart := value
+	charStart := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> className [
-	^ClassName
+	^className
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> className: value [
-	ClassName := value
+	className := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> filePath [
-	^FilePath
+	^filePath
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> filePath: value [
-	FilePath := value
+	filePath := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> lineNumber [
-	^LineNumber
+	^lineNumber
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> lineNumber: value [
-	LineNumber := value
+	lineNumber := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> lineOfCode [
-	^LineOfCode
+	^lineOfCode
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> lineOfCode: value [
-	LineOfCode := value
+	lineOfCode := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> methodName [
-	^MethodName
+	^methodName
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> methodName: value [
-	MethodName := value
+	methodName := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> packageName [
-	^PackageName
+	^packageName
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> packageName: value [
-	PackageName := value
+	packageName := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> sourceCode [
-	^SourceCode
+	^sourceCode
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> sourceCode: value [
-	SourceCode := value
+	sourceCode := value
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> stepName [
-	^StepName
+	^stepName
 ]
 
 { #category : #'as yet unclassified' }
 ContextProperty >> stepName: value [
-	StepName := value
+	stepName := value
 ]
