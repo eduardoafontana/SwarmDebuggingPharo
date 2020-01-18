@@ -19,10 +19,10 @@ jsonData := String streamContents: [ :stream |
 		mapInstVarsFor: BreakpointData;
       nextPut: (dataObject) ].
 
-ZnClient new
+[ ZnClient new
    url: 'http://swarmserver.azurewebsites.net/api/session';
    entity: (ZnEntity
                with: jsonData 
                type: ZnMimeType applicationJson);
-   post.
+   post. ] schedule.
 ]
