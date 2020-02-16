@@ -11,5 +11,5 @@ A repository for Pharo Swarm Debugging. A pharo debugging data collector.
 - https://www.youtube.com/watch?v=Uyz_hPDpR8U
 - https://www.youtube.com/watch?v=3HiRGIxdczs
 
-## Example of analysing sessions:
+## Example of analysing sessions
 - https://www.youtube.com/watch?v=YkXaiD60OFU
