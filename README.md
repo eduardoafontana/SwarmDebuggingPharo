@@ -1,6 +1,8 @@
 # SwarmDebuggingPharo
 A repository for Pharo Swarm Debugging. A pharo debugging data collector.
 
+## Visualization:
+- http://swarmserver.azurewebsites.net
 
 ## How to use Swarm Debugging on Pharo
 - https://www.youtube.com/watch?v=JwRsO7V2-IQ
